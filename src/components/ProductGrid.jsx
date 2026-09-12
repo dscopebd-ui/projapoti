@@ -1,7 +1,7 @@
 import ProductCard from './ProductCard.jsx';
 import { categories } from '../data/categories.js';
 
-export default function ProductGrid({ products, activeCat, onOpenDetail, loading }) {
+export default function ProductGrid({ products, activeCat, loading }) {
     if (loading) {
         return (
             <div className="product-grid">
@@ -39,7 +39,6 @@ export default function ProductGrid({ products, activeCat, onOpenDetail, loading
                             <ProductCard
                                 key={p.firebaseDocId || p.id}
                                 product={p}
-                                onOpenDetail={onOpenDetail}
                             />
                         ))}
                     </div>
@@ -66,7 +65,6 @@ export default function ProductGrid({ products, activeCat, onOpenDetail, loading
                 <ProductCard
                     key={p.firebaseDocId || p.id}
                     product={p}
-                    onOpenDetail={onOpenDetail}
                 />
             ))}
         </div>

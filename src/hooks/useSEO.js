@@ -1,20 +1,7 @@
 import { useEffect } from 'react';
 
-/**
- * useSEO — dynamic title, description, og tags আপডেট করে
- *
- * ব্যবহার:
- *   useSEO({
- *     title: 'প্রোডাক্টের নাম',
- *     description: 'বিবরণ',
- *     image: 'ছবির URL',
- *     url: 'প্রোডাক্টের URL'
- *   });
- */
 export function useSEO({ title, description, image, url }) {
     useEffect(() => {
-        if (!title && !description) return;
-
         const baseTitle = 'প্রজাপতি';
         const siteUrl = 'https://projapotishop.vercel.app';
 
@@ -43,28 +30,23 @@ export function useSEO({ title, description, image, url }) {
             link.setAttribute('href', href);
         };
 
-        /* ---- Title ---- */
         const fullTitle = title ? `${title} | ${baseTitle}` : baseTitle;
         document.title = fullTitle;
 
-        /* ---- Meta description ---- */
         if (description) {
             setMeta('meta[name="description"]', 'content', description);
             setMeta('meta[property="og:description"]', 'content', description);
             setMeta('meta[name="twitter:description"]', 'content', description);
         }
 
-        /* ---- OG title ---- */
         setMeta('meta[property="og:title"]', 'content', fullTitle);
         setMeta('meta[name="twitter:title"]', 'content', fullTitle);
 
-        /* ---- OG image ---- */
         if (image) {
             setMeta('meta[property="og:image"]', 'content', image);
             setMeta('meta[name="twitter:image"]', 'content', image);
         }
 
-        /* ---- URL / canonical ---- */
         const fullUrl = url ? `${siteUrl}${url}` : siteUrl;
         setMeta('meta[property="og:url"]', 'content', fullUrl);
         setLink('canonical', fullUrl);

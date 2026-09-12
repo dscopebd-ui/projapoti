@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import TopBar from './components/TopBar.jsx';
 import Header from './components/Header.jsx';
 import MobileNav from './components/MobileNav.jsx';
@@ -13,55 +14,13 @@ import Footer from './components/Footer.jsx';
 import { useAuth } from './context/AuthContext.jsx';
 import { useProducts } from './context/ProductContext.jsx';
 
-export default function App() {
+/* ============================================================
+   হোম পেজ
+   ============================================================ */
+function HomePage({ onOpenCart, onOpenAdmin, adminLabel }) {
     const [menuOpen, setMenuOpen] = useState(false);
     const [activeCat, setActiveCat] = useState('সব');
-    const [detailId, setDetailId] = useState(null);
-    const [cartOpen, setCartOpen] = useState(false);
-    const [checkoutOpen, setCheckoutOpen] = useState(false);
-    const [adminOpen, setAdminOpen] = useState(false);
-
-    const { user } = useAuth();
     const { products, loading } = useProducts();
-
-    /* ---------- URL থেকে প্রোডাক্ট id ---------- */
-    useEffect(() => {
-        const params = new URLSearchParams(window.location.search);
-        const id = params.get('product');
-        if (id) setDetailId(Number(id));
-
-        const handlePop = () => {
-            const p = new URLSearchParams(window.location.search);
-            const pid = p.get('product');
-            setDetailId(pid ? Number(pid) : null);
-        };
-        window.addEventListener('popstate', handlePop);
-        return () => window.removeEventListener('popstate', handlePop);
-    }, []);
-
-    const openDetail = (id) => {
-        setDetailId(id);
-        const url = new URL(window.location.href);
-        url.searchParams.set('product', id);
-        window.history.pushState({ productId: id }, '', url);
-        setTimeout(() => {
-            document
-                .getElementById('productDetail')
-                ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }, 50);
-    };
-
-    const closeDetail = () => {
-        setDetailId(null);
-        const url = new URL(window.location.href);
-        url.searchParams.delete('product');
-        window.history.replaceState(null, '', url);
-        setTimeout(() => {
-            document
-                .getElementById('products')
-                ?.scrollIntoView({ behavior: 'smooth' });
-        }, 50);
-    };
 
     const selectCat = (id) => {
         setActiveCat(id);
@@ -72,41 +31,16 @@ export default function App() {
         }, 50);
     };
 
-    const openCart = () => setCartOpen(true);
-    const closeCart = () => setCartOpen(false);
-
-    const openCheckout = () => {
-        setCartOpen(false);
-        setCheckoutOpen(true);
-    };
-    const closeCheckout = () => setCheckoutOpen(false);
-
-    const openAdmin = () => setAdminOpen(true);
-    const closeAdmin = () => setAdminOpen(false);
-
-    const handleBuyNow = () => {
-        setCheckoutOpen(true);
-    };
-
-    const detailProduct =
-        detailId !== null
-            ? products.find(
-                  (p) =>
-                      Number(p.id) === Number(detailId) ||
-                      p.firebaseDocId === String(detailId)
-              )
-            : null;
-
     return (
         <>
             <div className="site-top">
                 <TopBar />
                 <Header
-                    onCartClick={openCart}
+                    onCartClick={onOpenCart}
                     onMenuToggle={() => setMenuOpen(!menuOpen)}
                     menuOpen={menuOpen}
-                    onAdminClick={openAdmin}
-                    adminLabel={user ? 'Admin' : 'Login'}
+                    onAdminClick={onOpenAdmin}
+                    adminLabel={adminLabel}
                 />
                 <MobileNav
                     open={menuOpen}
@@ -117,47 +51,190 @@ export default function App() {
             <Banner />
 
             <div className="container">
-                {detailProduct ? (
-                    <ProductDetail
-                        product={detailProduct}
-                        onBack={closeDetail}
-                        onBuyNow={handleBuyNow}
-                    />
-                ) : (
-                    <>
-                        <CategoryGrid
-                            activeCat={activeCat}
-                            onSelect={selectCat}
-                        />
+                <CategoryGrid
+                    activeCat={activeCat}
+                    onSelect={selectCat}
+                />
 
-                        <div id="products" style={{ marginTop: '3rem' }}>
-                            <h2 className="section-title">
-                                আমাদের পণ্যসমূহ
-                            </h2>
-                            <ProductGrid
-                                products={products}
-                                activeCat={activeCat}
-                                onOpenDetail={openDetail}
-                                loading={loading}
-                            />
-                        </div>
-                    </>
-                )}
+                <div id="products" style={{ marginTop: '3rem' }}>
+                    <h2 className="section-title">
+                        আমাদের পণ্যসমূহ
+                    </h2>
+                    <ProductGrid
+                        products={products}
+                        activeCat={activeCat}
+                        loading={loading}
+                    />
+                </div>
             </div>
 
             <Footer />
+        </>
+    );
+}
 
-            <CartDrawer
-                open={cartOpen}
-                onClose={closeCart}
-                onCheckout={openCheckout}
-            />
+/* ============================================================
+   চেকআউট পেজ
+   ============================================================ */
+function CheckoutPage({ onOpenCart, onOpenAdmin, adminLabel }) {
+    const [menuOpen, setMenuOpen] = useState(false);
+    const [checkoutOpen, setCheckoutOpen] = useState(true);
+    const navigate = useNavigate();
 
-            <CheckoutModal
-                open={checkoutOpen}
-                onClose={closeCheckout}
-            />
+    const handleClose = () => {
+        setCheckoutOpen(false);
+        navigate('/');
+    };
 
+    return (
+        <>
+            <div className="site-top">
+                <TopBar />
+                <Header
+                    onCartClick={onOpenCart}
+                    onMenuToggle={() => setMenuOpen(!menuOpen)}
+                    menuOpen={menuOpen}
+                    onAdminClick={onOpenAdmin}
+                    adminLabel={adminLabel}
+                />
+                <MobileNav
+                    open={menuOpen}
+                    onClose={() => setMenuOpen(false)}
+                />
+            </div>
+
+            <Banner />
+
+            <div className="container" style={{ minHeight: '60vh' }}>
+                <CheckoutModal
+                    open={checkoutOpen}
+                    onClose={handleClose}
+                />
+            </div>
+
+            <Footer />
+        </>
+    );
+}
+
+/* ============================================================
+   Product Detail Page — Route ভিত্তিক
+   ============================================================ */
+function ProductDetailPage({ onOpenCart, onOpenAdmin, adminLabel }) {
+    const [menuOpen, setMenuOpen] = useState(false);
+
+    return (
+        <>
+            <div className="site-top">
+                <TopBar />
+                <Header
+                    onCartClick={onOpenCart}
+                    onMenuToggle={() => setMenuOpen(!menuOpen)}
+                    menuOpen={menuOpen}
+                    onAdminClick={onOpenAdmin}
+                    adminLabel={adminLabel}
+                />
+                <MobileNav
+                    open={menuOpen}
+                    onClose={() => setMenuOpen(false)}
+                />
+            </div>
+
+            <ProductDetail />
+
+            <Footer />
+        </>
+    );
+}
+
+/* ============================================================
+   404 পেজ
+   ============================================================ */
+function NotFound() {
+    const navigate = useNavigate();
+    return (
+        <div className="container" style={{ padding: '5rem 1rem', textAlign: 'center' }}>
+            <h1 style={{ fontSize: '3rem', color: '#6b1d8e', marginBottom: 12 }}>
+                404
+            </h1>
+            <h2 style={{ color: '#333', marginBottom: 12 }}>
+                পেজটি খুঁজে পাওয়া যায়নি
+            </h2>
+            <p style={{ color: '#888', marginBottom: 24 }}>
+                আপনি যে পেজটি খুঁজছেন সেটি নেই।
+            </p>
+            <button
+                type="button"
+                className="btn-details"
+                style={{ maxWidth: 200, margin: '0 auto' }}
+                onClick={() => navigate('/')}
+            >
+                হোমে ফিরে যান
+            </button>
+        </div>
+    );
+}
+
+/* ============================================================
+   মূল App
+   ============================================================ */
+export default function App() {
+    const [cartOpen, setCartOpen] = useState(false);
+    const [adminOpen, setAdminOpen] = useState(false);
+    const { user } = useAuth();
+    const location = useLocation();
+
+    useEffect(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, [location.pathname]);
+
+    const openCart = () => setCartOpen(true);
+    const closeCart = () => setCartOpen(false);
+    const openAdmin = () => setAdminOpen(true);
+    const closeAdmin = () => setAdminOpen(false);
+
+    const adminLabel = user ? 'Admin' : 'Login';
+
+    return (
+        <>
+            <Routes>
+                <Route
+                    path="/"
+                    element={
+                        <HomePage
+                            onOpenCart={openCart}
+                            onOpenAdmin={openAdmin}
+                            adminLabel={adminLabel}
+                        />
+                    }
+                />
+
+                <Route
+                    path="/product/:slug"
+                    element={
+                        <ProductDetailPage
+                            onOpenCart={openCart}
+                            onOpenAdmin={openAdmin}
+                            adminLabel={adminLabel}
+                        />
+                    }
+                />
+
+                <Route
+                    path="/checkout"
+                    element={
+                        <CheckoutPage
+                            onOpenCart={openCart}
+                            onOpenAdmin={openAdmin}
+                            adminLabel={adminLabel}
+                        />
+                    }
+                />
+
+                <Route path="*" element={<NotFound />} />
+            </Routes>
+
+            <CartDrawer open={cartOpen} onClose={closeCart} />
             <AdminPanel open={adminOpen} onClose={closeAdmin} />
         </>
     );

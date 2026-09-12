@@ -1,15 +1,17 @@
+import { Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext.jsx';
 import { formatPrice, getDiscountPercent } from '../utils/formatPrice.js';
+import { slugify } from '../utils/slugify.js';
 
-export default function ProductCard({ product, onOpenDetail }) {
+export default function ProductCard({ product }) {
     const { cart, addToCart } = useCart();
     const qty = cart[product.id] || 0;
 
     const imgSrc = product.img || product.images?.[0] || '';
     const discount = getDiscountPercent(product.price, product.oldPrice);
-
-    /* SEO-friendly alt text */
     const altText = `${product.name} — ${product.cat} — ৳${product.price} — প্রজাপতি`;
+
+    const productUrl = `/product/${slugify(product.name)}-${product.id}`;
 
     return (
         <div className="product-card">
@@ -25,21 +27,24 @@ export default function ProductCard({ product, onOpenDetail }) {
                 </div>
             )}
 
-            <img
-                src={imgSrc}
-                alt={altText}
-                title={product.name}
-                className="product-img"
-                onClick={() => onOpenDetail(product.id)}
-                loading="lazy"
-            />
+            <Link to={productUrl} title={`${product.name} — বিস্তারিত`}>
+                <img
+                    src={imgSrc}
+                    alt={altText}
+                    className="product-img"
+                    loading="lazy"
+                />
+            </Link>
 
             <div className="product-info">
-                <h3
-                    onClick={() => onOpenDetail(product.id)}
-                    title={`${product.name} — বিস্তারিত দেখুন`}
-                >
-                    {product.name}
+                <h3>
+                    <Link
+                        to={productUrl}
+                        style={{ color: 'inherit' }}
+                        title={`${product.name} — বিস্তারিত`}
+                    >
+                        {product.name}
+                    </Link>
                 </h3>
 
                 <div className="price-row">
@@ -65,14 +70,14 @@ export default function ProductCard({ product, onOpenDetail }) {
                         {qty > 0 ? `কার্টে (${qty})` : 'কার্টে যোগ'}
                     </button>
 
-                    <button
+                    <Link
+                        to={productUrl}
                         className="btn-details"
-                        type="button"
-                        onClick={() => onOpenDetail(product.id)}
-                        aria-label={`${product.name} এর বিস্তারিত দেখুন`}
+                        style={{ textAlign: 'center' }}
+                        aria-label={`${product.name} এর বিস্তারিত`}
                     >
                         বিস্তারিত
-                    </button>
+                    </Link>
                 </div>
             </div>
         </div>

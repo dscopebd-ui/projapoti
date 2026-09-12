@@ -1,12 +1,13 @@
+import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext.jsx';
 import { useProducts } from '../context/ProductContext.jsx';
 import { formatPrice } from '../utils/formatPrice.js';
 
-export default function CartDrawer({ open, onClose, onCheckout }) {
+export default function CartDrawer({ open, onClose }) {
+    const navigate = useNavigate();
     const { cart, incQty, decQty, removeItem } = useCart();
     const { products } = useProducts();
 
-    /* ---------- কার্ট আইটেম + সাবটোটাল বের করা ---------- */
     const entries = Object.entries(cart).filter(([, qty]) => qty > 0);
 
     const items = entries
@@ -24,6 +25,11 @@ export default function CartDrawer({ open, onClose, onCheckout }) {
     );
 
     const empty = items.length === 0;
+
+    const handleCheckout = () => {
+        onClose();
+        navigate('/checkout');
+    };
 
     return (
         <>
@@ -73,9 +79,7 @@ export default function CartDrawer({ open, onClose, onCheckout }) {
                                         <button
                                             className="qty-btn"
                                             type="button"
-                                            onClick={() =>
-                                                decQty(product.id)
-                                            }
+                                            onClick={() => decQty(product.id)}
                                         >
                                             −
                                         </button>
@@ -85,17 +89,13 @@ export default function CartDrawer({ open, onClose, onCheckout }) {
                                         <button
                                             className="qty-btn"
                                             type="button"
-                                            onClick={() =>
-                                                incQty(product.id)
-                                            }
+                                            onClick={() => incQty(product.id)}
                                         >
                                             +
                                         </button>
                                         <span
                                             className="remove-link"
-                                            onClick={() =>
-                                                removeItem(product.id)
-                                            }
+                                            onClick={() => removeItem(product.id)}
                                         >
                                             সরান
                                         </span>
@@ -118,7 +118,7 @@ export default function CartDrawer({ open, onClose, onCheckout }) {
                         className="checkout-btn"
                         type="button"
                         disabled={empty}
-                        onClick={onCheckout}
+                        onClick={handleCheckout}
                     >
                         চেকআউট করুন
                     </button>
