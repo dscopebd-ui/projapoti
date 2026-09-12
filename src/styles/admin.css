@@ -1,0 +1,399 @@
+/* ============================================================
+   প্রজাপতি — Admin Panel Styles
+   ============================================================ */
+
+.admin-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(20, 5, 30, 0.65);
+    z-index: 5000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    backdrop-filter: blur(4px);
+}
+
+.admin-modal {
+    width: min(720px, 100%);
+    max-height: 92vh;
+    overflow-y: auto;
+    background: #fff;
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 20px 60px rgba(107, 29, 142, 0.25);
+}
+
+.admin-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 18px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid #f0e4f5;
+}
+
+.admin-head h2 {
+    color: var(--primary-purple);
+    font-size: 1.3rem;
+    font-weight: 800;
+    margin: 0;
+}
+
+.admin-head .admin-sub {
+    font-size: 0.8rem;
+    color: #888;
+    margin-top: 3px;
+}
+
+.admin-close {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--light-bg);
+    color: var(--primary-purple);
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.admin-close:hover {
+    background: var(--primary-pink);
+    color: #fff;
+}
+
+/* ---------- Form Fields ---------- */
+
+.admin-field {
+    margin-bottom: 14px;
+}
+
+.admin-field label {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #30384f;
+    margin: 0 0 6px 2px;
+}
+
+.admin-field label .req {
+    color: var(--primary-pink);
+    margin-left: 3px;
+}
+
+.admin-field input,
+.admin-field textarea,
+.admin-field select {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #e0d5e8;
+    border-radius: 11px;
+    background: #fff;
+    outline: none;
+    font-size: 0.92rem;
+    font-family: inherit;
+    color: #333;
+    transition: 0.2s;
+    box-sizing: border-box;
+}
+
+.admin-field input:focus,
+.admin-field textarea:focus,
+.admin-field select:focus {
+    border-color: var(--primary-pink);
+    box-shadow: 0 0 0 3px rgba(216, 27, 96, 0.1);
+}
+
+.admin-field textarea {
+    min-height: 90px;
+    resize: vertical;
+    line-height: 1.5;
+}
+
+.admin-field input.err,
+.admin-field textarea.err,
+.admin-field select.err {
+    border-color: var(--primary-pink);
+    background: #fff5f9;
+}
+
+.admin-field .hint {
+    font-size: 0.72rem;
+    color: #999;
+    margin-top: 4px;
+}
+
+.admin-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+/* ---------- Category Fields ---------- */
+
+.admin-cat-fields {
+    margin-top: 4px;
+    padding: 16px;
+    border-radius: 12px;
+    background: #fdf7ff;
+    border: 1px solid #f0e4f5;
+}
+
+.admin-cat-fields h4 {
+    color: var(--primary-purple);
+    font-size: 0.85rem;
+    margin: 0 0 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* ---------- Buttons ---------- */
+
+.admin-submit {
+    width: 100%;
+    padding: 13px;
+    border-radius: 12px;
+    background: var(--gradient-main);
+    color: #fff;
+    font-weight: 800;
+    font-size: 0.95rem;
+    cursor: pointer;
+    border: none;
+    transition: 0.2s;
+}
+
+.admin-submit:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(216, 27, 96, 0.22);
+}
+
+.admin-submit:disabled {
+    opacity: 0.6;
+    cursor: wait;
+    transform: none;
+}
+
+.admin-secondary {
+    width: 100%;
+    padding: 11px;
+    border-radius: 12px;
+    background: var(--light-bg);
+    color: var(--primary-purple);
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    border: none;
+    transition: 0.2s;
+}
+
+.admin-secondary:hover {
+    background: #f0e4f5;
+}
+
+/* ---------- Status Messages ---------- */
+
+.admin-status {
+    padding: 11px 14px;
+    border-radius: 10px;
+    background: #fdf0f5;
+    color: var(--primary-purple);
+    font-size: 0.82rem;
+    margin-bottom: 14px;
+    font-weight: 600;
+}
+
+.admin-error-msg {
+    padding: 11px 14px;
+    border-radius: 10px;
+    background: #fdeaea;
+    color: #b71c1c;
+    font-size: 0.82rem;
+    margin-bottom: 14px;
+    font-weight: 600;
+    display: none;
+}
+
+.admin-error-msg.show {
+    display: block;
+}
+
+.admin-success-msg {
+    padding: 11px 14px;
+    border-radius: 10px;
+    background: #e8f7ec;
+    color: #13833b;
+    font-size: 0.82rem;
+    margin-bottom: 14px;
+    font-weight: 600;
+    display: none;
+}
+
+.admin-success-msg.show {
+    display: block;
+}
+
+/* ---------- Progress ---------- */
+
+.admin-progress {
+    height: 8px;
+    border-radius: 10px;
+    background: #f0e4f5;
+    overflow: hidden;
+    margin: 10px 0 14px;
+    display: none;
+}
+
+.admin-progress.show {
+    display: block;
+}
+
+.admin-progress span {
+    display: block;
+    width: 0;
+    height: 100%;
+    background: var(--gradient-main);
+    transition: width 0.25s ease;
+    border-radius: 10px;
+}
+
+/* ---------- Section ---------- */
+
+.admin-section {
+    border-top: 1px solid #f0e4f5;
+    padding-top: 20px;
+    margin-top: 20px;
+}
+
+.admin-section h3 {
+    color: var(--primary-purple);
+    font-size: 1rem;
+    font-weight: 800;
+    margin: 0 0 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* ---------- Product List ---------- */
+
+.admin-product-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 340px;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.admin-product-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border: 1px solid #f0e4f5;
+    border-radius: 11px;
+    background: #fdfaff;
+}
+
+.admin-product-item img {
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    background: #fff;
+    border-radius: 8px;
+    flex-shrink: 0;
+    border: 1px solid #f0e4f5;
+}
+
+.admin-product-meta {
+    min-width: 0;
+    flex: 1;
+}
+
+.admin-product-meta strong {
+    display: block;
+    font-size: 0.85rem;
+    color: #30384f;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 2px;
+}
+
+.admin-product-meta small {
+    display: block;
+    color: #888;
+    font-size: 0.72rem;
+}
+
+.admin-delete-btn {
+    border: none;
+    border-radius: 9px;
+    padding: 8px 11px;
+    background: #d92d20;
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.admin-delete-btn:hover:not(:disabled) {
+    background: #b71c1c;
+}
+
+.admin-delete-btn:disabled {
+    opacity: 0.55;
+    cursor: wait;
+}
+
+/* ---------- User Info ---------- */
+
+.admin-user-info {
+    font-size: 0.8rem;
+    color: #666;
+    padding: 10px 12px;
+    background: var(--light-bg);
+    border-radius: 10px;
+    margin-bottom: 16px;
+    word-break: break-all;
+}
+
+/* ---------- Mobile ---------- */
+
+@media (max-width: 600px) {
+    .admin-modal {
+        padding: 18px;
+        border-radius: 16px;
+    }
+
+    .admin-head h2 {
+        font-size: 1.1rem;
+    }
+
+    .admin-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    .admin-row .admin-field {
+        margin-bottom: 14px;
+    }
+
+    .admin-product-item img {
+        width: 42px;
+        height: 42px;
+    }
+
+    .admin-cat-fields {
+        padding: 12px;
+    }
+}
