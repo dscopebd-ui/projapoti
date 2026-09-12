@@ -6,19 +6,19 @@ export default function ProductCard({ product, onOpenDetail }) {
     const qty = cart[product.id] || 0;
 
     const imgSrc = product.img || product.images?.[0] || '';
-
     const discount = getDiscountPercent(product.price, product.oldPrice);
+
+    /* SEO-friendly alt text */
+    const altText = `${product.name} — ${product.cat} — ৳${product.price} — প্রজাপতি`;
 
     return (
         <div className="product-card">
-            {/* 🛒 কার্ট ব্যাজ */}
             {qty > 0 && (
                 <div className="cart-badge" title={`কার্টে ${qty}টি`}>
                     🛒 {qty}
                 </div>
             )}
 
-            {/* 🏷️ ডিসকাউন্ট ব্যাজ */}
             {discount > 0 && (
                 <div className="discount-ribbon">
                     {discount}% ছাড়
@@ -27,14 +27,18 @@ export default function ProductCard({ product, onOpenDetail }) {
 
             <img
                 src={imgSrc}
-                alt={product.name}
+                alt={altText}
+                title={product.name}
                 className="product-img"
                 onClick={() => onOpenDetail(product.id)}
                 loading="lazy"
             />
 
             <div className="product-info">
-                <h3 onClick={() => onOpenDetail(product.id)}>
+                <h3
+                    onClick={() => onOpenDetail(product.id)}
+                    title={`${product.name} — বিস্তারিত দেখুন`}
+                >
                     {product.name}
                 </h3>
 
@@ -56,6 +60,7 @@ export default function ProductCard({ product, onOpenDetail }) {
                         className={`btn-add ${qty > 0 ? 'added' : ''}`}
                         type="button"
                         onClick={() => addToCart(product.id, 1)}
+                        aria-label={`${product.name} কার্টে যোগ করুন`}
                     >
                         {qty > 0 ? `কার্টে (${qty})` : 'কার্টে যোগ'}
                     </button>
@@ -64,6 +69,7 @@ export default function ProductCard({ product, onOpenDetail }) {
                         className="btn-details"
                         type="button"
                         onClick={() => onOpenDetail(product.id)}
+                        aria-label={`${product.name} এর বিস্তারিত দেখুন`}
                     >
                         বিস্তারিত
                     </button>

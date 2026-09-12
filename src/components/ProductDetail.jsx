@@ -1,8 +1,19 @@
 import { useCart } from '../context/CartContext.jsx';
 import { formatPrice, getDiscountPercent } from '../utils/formatPrice.js';
+import { useSEO } from '../hooks/useSEO.js';
 
 export default function ProductDetail({ product, onBack, onBuyNow }) {
     const { addToCart } = useCart();
+
+    /* ---- Dynamic SEO for this product ---- */
+    useSEO({
+        title: product ? product.name : 'প্রোডাক্ট',
+        description: product
+            ? `${product.name} — ${product.desc || ''}`.slice(0, 160)
+            : '',
+        image: product?.img,
+        url: product ? `/?product=${product.id}` : '/'
+    });
 
     if (!product) return null;
 
@@ -13,8 +24,37 @@ export default function ProductDetail({ product, onBack, onBuyNow }) {
 
     const discount = getDiscountPercent(product.price, product.oldPrice);
 
+    /* ---- Product Structured Data ---- */
+    const productSchema = {
+        '@context': 'https://schema.org',
+        '@type': 'Product',
+        name: product.name,
+        description: product.desc || '',
+        image: imgs,
+        category: product.cat,
+        offers: {
+            '@type': 'Offer',
+            price: product.price,
+            priceCurrency: 'BDT',
+            availability: 'https://schema.org/InStock',
+            url: `https://projapotishop.vercel.app/?product=${product.id}`
+        },
+        brand: {
+            '@type': 'Brand',
+            name: 'প্রজাপতি'
+        }
+    };
+
     return (
         <div className="detail-page active" id="productDetail">
+            {/* Dynamic Structured Data */}
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{
+                    __html: JSON.stringify(productSchema)
+                }}
+            />
+
             <button
                 type="button"
                 className="detail-back"
@@ -38,7 +78,7 @@ export default function ProductDetail({ product, onBack, onBuyNow }) {
                                     key={i}
                                     src={src}
                                     className={`detail-thumb ${i === 0 ? 'active' : ''}`}
-                                    alt={`${product.name} ${i + 1}`}
+                                    alt={`${product.name} - ছবি ${i + 1}`}
                                     onClick={(e) => {
                                         document.querySelector('.detail-gallery-main').src = src;
                                         document
