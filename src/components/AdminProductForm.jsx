@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { categories } from '../data/categories.js';
 import { addProduct } from '../firebase/products.js';
-import { uploadToImgBB } from '../utils/imgbbUpload.js';
+import { uploadToCloudinary } from '../utils/cloudinaryUpload.js';
 import { useAuth } from '../context/AuthContext.jsx';
 
 export default function AdminProductForm({ onUploaded }) {
@@ -62,14 +62,16 @@ export default function AdminProductForm({ onUploaded }) {
         setProgress(5);
 
         try {
+            /* ছবি Cloudinary-তে আপলোড */
             const imageUrls = [];
             for (let i = 0; i < files.length; i++) {
                 setProgress(10 + (i / files.length) * 60);
-                const url = await uploadToImgBB(files[i]);
+                const url = await uploadToCloudinary(files[i]);
                 imageUrls.push(url);
             }
             setProgress(80);
 
+            /* benefits array */
             const benefits = benefitsRaw
                 ? benefitsRaw
                       .split(',')
@@ -77,6 +79,7 @@ export default function AdminProductForm({ onUploaded }) {
                       .filter(Boolean)
                 : [];
 
+            /* Firestore-এ সেভ */
             await addProduct(
                 {
                     id: Date.now(),
@@ -120,9 +123,12 @@ export default function AdminProductForm({ onUploaded }) {
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    placeholder="যেমন: স্মার্ট ওয়াচ"
+                    placeholder="যেমন: Smart Watch T900"
                     required
                 />
+                <div className="hint">
+                    💡 ইংরেজিতে নাম দিলে URL সুন্দর হবে
+                </div>
             </div>
 
             <div className="admin-row">
@@ -214,7 +220,7 @@ export default function AdminProductForm({ onUploaded }) {
                 <div className="hint">
                     {files.length
                         ? files.map((f) => f.name).join(', ')
-                        : '১-৩টি ছবি নির্বাচন করুন'}
+                        : '১-৩টি ছবি নির্বাচন করুন (Cloudinary-তে অটো WebP হবে)'}
                 </div>
             </div>
 
