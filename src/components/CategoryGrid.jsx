@@ -1,28 +1,21 @@
+import { Link } from 'react-router-dom';
 import { categories } from '../data/categories.js';
 
-export default function CategoryGrid({ activeCat, onSelect }) {
-    const all = [
-        { id: 'সব', icon: '✨', label: 'সব পণ্য' },
-        ...categories
-    ];
-
+export default function CategoryGrid() {
     return (
         <div className="categories-section" id="categories">
             <h2 className="section-title">ক্যাটাগরি</h2>
             <div className="category-grid">
-                {all.map((c) => (
-                    <a
+                {categories.map((c) => (
+                    <Link
                         key={c.id}
-                        href="#products"
-                        className={`category-card ${c.id === activeCat ? 'active' : ''}`}
-                        onClick={(e) => {
-                            e.preventDefault();
-                            onSelect(c.id);
-                        }}
+                        to={`/category/${c.slug}`}
+                        className="category-card"
+                        title={`${c.label} — সব পণ্য দেখুন`}
                     >
                         <span className="category-icon">{c.icon}</span>
                         <strong>{c.label}</strong>
-                    </a>
+                    </Link>
                 ))}
             </div>
         </div>

@@ -11,6 +11,7 @@ import CartDrawer from './components/CartDrawer.jsx';
 import CheckoutModal from './components/CheckoutModal.jsx';
 import AdminPanel from './components/AdminPanel.jsx';
 import Footer from './components/Footer.jsx';
+import CategoryPage from './pages/CategoryPage.jsx';
 import { useAuth } from './context/AuthContext.jsx';
 import { useProducts } from './context/ProductContext.jsx';
 
@@ -19,17 +20,7 @@ import { useProducts } from './context/ProductContext.jsx';
    ============================================================ */
 function HomePage({ onOpenCart, onOpenAdmin, adminLabel }) {
     const [menuOpen, setMenuOpen] = useState(false);
-    const [activeCat, setActiveCat] = useState('সব');
     const { products, loading } = useProducts();
-
-    const selectCat = (id) => {
-        setActiveCat(id);
-        setTimeout(() => {
-            document
-                .getElementById('products')
-                ?.scrollIntoView({ behavior: 'smooth' });
-        }, 50);
-    };
 
     return (
         <>
@@ -51,10 +42,7 @@ function HomePage({ onOpenCart, onOpenAdmin, adminLabel }) {
             <Banner />
 
             <div className="container">
-                <CategoryGrid
-                    activeCat={activeCat}
-                    onSelect={selectCat}
-                />
+                <CategoryGrid />
 
                 <div id="products" style={{ marginTop: '3rem' }}>
                     <h2 className="section-title">
@@ -62,7 +50,7 @@ function HomePage({ onOpenCart, onOpenAdmin, adminLabel }) {
                     </h2>
                     <ProductGrid
                         products={products}
-                        activeCat={activeCat}
+                        activeCat="সব"
                         loading={loading}
                     />
                 </div>
@@ -118,7 +106,7 @@ function CheckoutPage({ onOpenCart, onOpenAdmin, adminLabel }) {
 }
 
 /* ============================================================
-   Product Detail Page — Route ভিত্তিক
+   Product Detail Page
    ============================================================ */
 function ProductDetailPage({ onOpenCart, onOpenAdmin, adminLabel }) {
     const [menuOpen, setMenuOpen] = useState(false);
@@ -205,6 +193,16 @@ export default function App() {
                             onOpenCart={openCart}
                             onOpenAdmin={openAdmin}
                             adminLabel={adminLabel}
+                        />
+                    }
+                />
+
+                <Route
+                    path="/category/:slug"
+                    element={
+                        <CategoryPage
+                            onOpenCart={openCart}
+                            onOpenAdmin={openAdmin}
                         />
                     }
                 />

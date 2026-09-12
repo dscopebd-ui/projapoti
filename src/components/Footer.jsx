@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { SITE } from '../data/siteConfig.js';
 import { categories } from '../data/categories.js';
 
@@ -16,7 +17,9 @@ export default function Footer() {
                     <ul>
                         {categories.map((c) => (
                             <li key={c.id}>
-                                <a href="#products">{c.label}</a>
+                                <Link to={`/category/${c.slug}`}>
+                                    {c.label}
+                                </Link>
                             </li>
                         ))}
                     </ul>

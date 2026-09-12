@@ -1,15 +1,163 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://projapotishop.vercel.app/</loc>
-    <lastmod>2026-09-12</lastmod>
+/**
+ * Dynamic Sitemap Generator
+ * — Home + Categories + Products
+ */
+
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+/* ---------- .env পড়া ---------- */
+function loadEnv() {
+    const envPath = path.resolve(__dirname, '../.env');
+    if (!fs.existsSync(envPath)) return {};
+
+    const content = fs.readFileSync(envPath, 'utf8');
+    const env = {};
+
+    content.split('\n').forEach((line) => {
+        line = line.trim();
+        if (!line || line.startsWith('#')) return;
+        const match = line.match(/^([^=]+)=(.*)$/);
+        if (match) {
+            env[match[1].trim()] = match[2].trim().replace(/^["']|["']$/g, '');
+        }
+    });
+
+    return env;
+}
+
+const localEnv = loadEnv();
+
+const SITE_URL = 'https://projapotishop.vercel.app';
+const PROJECT_ID =
+    process.env.VITE_FIREBASE_PROJECT_ID ||
+    localEnv.VITE_FIREBASE_PROJECT_ID ||
+    'projapoti-666dd';
+const API_KEY =
+    process.env.VITE_FIREBASE_API_KEY || localEnv.VITE_FIREBASE_API_KEY;
+
+/* ---------- ক্যাটাগরি (categories.js-এর সাথে সিঙ্ক) ---------- */
+const CATEGORIES = [
+    { id: 'গ্যাজেট', slug: 'gadget' },
+    { id: 'ফ্যাশন', slug: 'fashion' },
+    { id: 'বিউটি', slug: 'beauty' },
+    { id: 'ফুড সাপ্লিমেন্ট', slug: 'food-supplement' }
+];
+
+/* ---------- Slugify ---------- */
+function slugify(text) {
+    if (!text) return '';
+    const banglaMap = {
+        অ: 'o', আ: 'a', ই: 'i', ঈ: 'i', উ: 'u', ঊ: 'u', ঋ: 'ri',
+        এ: 'e', ঐ: 'oi', ও: 'o', ঔ: 'ou',
+        ক: 'k', খ: 'kh', গ: 'g', ঘ: 'gh', ঙ: 'ng',
+        চ: 'ch', ছ: 'chh', জ: 'j', ঝ: 'jh', ঞ: 'n',
+        ট: 't', ঠ: 'th', ড: 'd', ঢ: 'dh', ণ: 'n',
+        ত: 't', থ: 'th', দ: 'd', ধ: 'dh', ন: 'n',
+        প: 'p', ফ: 'ph', ব: 'b', ভ: 'bh', ম: 'm',
+        য: 'j', র: 'r', ল: 'l', শ: 'sh', ষ: 'sh', স: 's', হ: 'h',
+        ড়: 'r', ঢ়: 'rh', য়: 'y',
+        'ং': 'ng', 'ঃ': 'h', 'ঁ': '',
+        'া': 'a', 'ি': 'i', 'ী': 'i', 'ু': 'u', 'ূ': 'u',
+        'ৃ': 'ri', 'ে': 'e', 'ৈ': 'oi', 'ো': 'o', 'ৌ': 'ou',
+        '্': ''
+    };
+    let result = '';
+    for (const char of text) {
+        result += banglaMap[char] !== undefined ? banglaMap[char] : char;
+    }
+    return result.toLowerCase().trim()
+        .replace(/[^\w\s-]/g, '')
+        .replace(/[\s_-]+/g, '-')
+        .replace(/^-+|-+$/g, '')
+        .slice(0, 60);
+}
+
+/* ---------- Firestore ---------- */
+async function fetchProducts() {
+    if (!API_KEY) return [];
+
+    const url = `https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/databases/(default)/documents/products?key=${API_KEY}&pageSize=1000`;
+
+    try {
+        const res = await fetch(url);
+        if (!res.ok) return [];
+        const data = await res.json();
+        return (data.documents || []).map((doc) => {
+            const fields = doc.fields || {};
+            return {
+                id: fields.id?.integerValue || fields.id?.stringValue || doc.name.split('/').pop(),
+                name: fields.name?.stringValue || ''
+            };
+        });
+    } catch {
+        return [];
+    }
+}
+
+/* ---------- Sitemap ---------- */
+function buildSitemap(products) {
+    const now = new Date().toISOString().split('T')[0];
+    const urls = [];
+
+    /* হোম */
+    urls.push(`  <url>
+    <loc>${SITE_URL}/</loc>
+    <lastmod>${now}</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>https://projapotishop.vercel.app/product/smart-ojach-1789226439486</loc>
-    <lastmod>2026-09-12</lastmod>
+  </url>`);
+
+    /* ক্যাটাগরি */
+    CATEGORIES.forEach((c) => {
+        urls.push(`  <url>
+    <loc>${SITE_URL}/category/${c.slug}</loc>
+    <lastmod>${now}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>`);
+    });
+
+    /* প্রোডাক্ট */
+    products.forEach((p) => {
+        const slug = slugify(p.name);
+        urls.push(`  <url>
+    <loc>${SITE_URL}/product/${slug}-${p.id}</loc>
+    <lastmod>${now}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
-  </url>
+  </url>`);
+    });
+
+    return `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urls.join('\n')}
 </urlset>
+`;
+}
+
+async function main() {
+    console.log('🗺️  Generating dynamic sitemap...');
+    const products = await fetchProducts();
+    console.log(`📦 Found ${products.length} products`);
+    console.log(`📂 Adding ${CATEGORIES.length} categories`);
+
+    const sitemap = buildSitemap(products);
+    const outputPath = path.resolve(__dirname, '../public/sitemap.xml');
+    fs.writeFileSync(outputPath, sitemap, 'utf8');
+    console.log(`✅ Total URLs: ${products.length + CATEGORIES.length + 1}`);
+}
+
+main().catch((err) => {
+    console.error('❌ Failed:', err);
+    const fallback = buildSitemap([]);
+    fs.writeFileSync(
+        path.resolve(__dirname, '../public/sitemap.xml'),
+        fallback,
+        'utf8'
+    );
+});
