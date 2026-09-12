@@ -1,5 +1,6 @@
 import { SITE } from '../data/siteConfig.js';
 import { useCart } from '../context/CartContext.jsx';
+import SearchBar from './SearchBar.jsx';
 
 export default function Header({
     onCartClick,
@@ -13,7 +14,7 @@ export default function Header({
     return (
         <header>
             <nav className="navbar">
-                <a href="#" className="logo-container">
+                <a href="/" className="logo-container">
                     <div className="logo-mark">
                         <img src={SITE.logoImg} alt={`${SITE.name} Logo`} />
                     </div>
@@ -24,13 +25,15 @@ export default function Header({
                 </a>
 
                 <ul className="nav-links">
-                    <li><a href="#home">হোম</a></li>
-                    <li><a href="#categories">ক্যাটাগরি</a></li>
-                    <li><a href="#products">পণ্যসমূহ</a></li>
-                    <li><a href="#contact">যোগাযোগ</a></li>
+                    <li><a href="/">হোম</a></li>
+                    <li><a href="/#categories">ক্যাটাগরি</a></li>
+                    <li><a href="/#products">পণ্যসমূহ</a></li>
+                    <li><a href="/#contact">যোগাযোগ</a></li>
                 </ul>
 
                 <div className="navbar-right">
+                    <SearchBar />
+
                     <button
                         className="admin-btn"
                         type="button"

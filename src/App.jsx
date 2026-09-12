@@ -12,12 +12,10 @@ import CheckoutModal from './components/CheckoutModal.jsx';
 import AdminPanel from './components/AdminPanel.jsx';
 import Footer from './components/Footer.jsx';
 import CategoryPage from './pages/CategoryPage.jsx';
+import SearchPage from './pages/SearchPage.jsx';
 import { useAuth } from './context/AuthContext.jsx';
 import { useProducts } from './context/ProductContext.jsx';
 
-/* ============================================================
-   হোম পেজ
-   ============================================================ */
 function HomePage({ onOpenCart, onOpenAdmin, adminLabel }) {
     const [menuOpen, setMenuOpen] = useState(false);
     const { products, loading } = useProducts();
@@ -45,9 +43,7 @@ function HomePage({ onOpenCart, onOpenAdmin, adminLabel }) {
                 <CategoryGrid />
 
                 <div id="products" style={{ marginTop: '3rem' }}>
-                    <h2 className="section-title">
-                        আমাদের পণ্যসমূহ
-                    </h2>
+                    <h2 className="section-title">আমাদের পণ্যসমূহ</h2>
                     <ProductGrid
                         products={products}
                         activeCat="সব"
@@ -61,9 +57,6 @@ function HomePage({ onOpenCart, onOpenAdmin, adminLabel }) {
     );
 }
 
-/* ============================================================
-   চেকআউট পেজ
-   ============================================================ */
 function CheckoutPage({ onOpenCart, onOpenAdmin, adminLabel }) {
     const [menuOpen, setMenuOpen] = useState(false);
     const [checkoutOpen, setCheckoutOpen] = useState(true);
@@ -105,9 +98,6 @@ function CheckoutPage({ onOpenCart, onOpenAdmin, adminLabel }) {
     );
 }
 
-/* ============================================================
-   Product Detail Page
-   ============================================================ */
 function ProductDetailPage({ onOpenCart, onOpenAdmin, adminLabel }) {
     const [menuOpen, setMenuOpen] = useState(false);
 
@@ -135,9 +125,6 @@ function ProductDetailPage({ onOpenCart, onOpenAdmin, adminLabel }) {
     );
 }
 
-/* ============================================================
-   404 পেজ
-   ============================================================ */
 function NotFound() {
     const navigate = useNavigate();
     return (
@@ -163,9 +150,6 @@ function NotFound() {
     );
 }
 
-/* ============================================================
-   মূল App
-   ============================================================ */
 export default function App() {
     const [cartOpen, setCartOpen] = useState(false);
     const [adminOpen, setAdminOpen] = useState(false);
@@ -201,6 +185,16 @@ export default function App() {
                     path="/category/:slug"
                     element={
                         <CategoryPage
+                            onOpenCart={openCart}
+                            onOpenAdmin={openAdmin}
+                        />
+                    }
+                />
+
+                <Route
+                    path="/search"
+                    element={
+                        <SearchPage
                             onOpenCart={openCart}
                             onOpenAdmin={openAdmin}
                         />
