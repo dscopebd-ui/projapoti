@@ -9,23 +9,11 @@
 
 export const videos = [
     {
-        id: 1,
-        url: 'https://www.facebook.com/reel/2065697380741810',
-        title: 'স্মার্ট ওয়াচ রিভিউ',
-        type: 'reel'
-    },
-    {
         id: 2,
-        url: 'https://youtu.be/dQw4w9WgXcQ',
-        title: 'লেদার ওয়ালেট আনবক্সিং',
+        url: 'https://www.youtube.com/watch?v=Ajxw8RHEgRo',
+        title: 'ই-কমার্স ব্যবসা কি',
         type: 'video'
     },
-    {
-        id: 3,
-        url: 'https://www.youtube.com/watch?v=9bZkp7q19f0',
-        title: 'হেডফোন সাউন্ড টেস্ট',
-        type: 'video'
-    }
 ];
 
 /* ============================================================
