@@ -10,6 +10,10 @@ import {
 import AdminLogin from './AdminLogin.jsx';
 import AdminProductForm from './AdminProductForm.jsx';
 import AdminCoupons from './AdminCoupons.jsx';
+import AdminWithdrawals from './AdminWithdrawals.jsx';
+import AdminAffiliateSettings from './AdminAffiliateSettings.jsx';
+import AdminAffiliates from './AdminAffiliates.jsx';
+import AdminOrders from './AdminOrders.jsx';
 import StarRating from './StarRating.jsx';
 import { formatPrice } from '../utils/formatPrice.js';
 
@@ -20,6 +24,7 @@ export default function AdminPanel({ open, onClose }) {
     const [reviews, setReviews] = useState([]);
     const [reviewFilter, setReviewFilter] = useState('pending');
     const [reviewLoading, setReviewLoading] = useState(true);
+    const [activeTab, setActiveTab] = useState('products');
 
     useEffect(() => {
         if (!open || !isLoggedIn) return;
@@ -98,7 +103,7 @@ export default function AdminPanel({ open, onClose }) {
                         <h2>{isLoggedIn ? '⚙️ Admin Panel' : '🔐 Admin Login'}</h2>
                         <div className="admin-sub">
                             {isLoggedIn
-                                ? 'প্রোডাক্ট, রিভিউ, কুপন ও অর্ডার ম্যানেজ করুন'
+                                ? 'সব কিছু এক জায়গায় ম্যানেজ করুন'
                                 : 'শুধু অ্যাডমিন প্রবেশ করতে পারবেন'}
                         </div>
                     </div>
@@ -123,162 +128,259 @@ export default function AdminPanel({ open, onClose }) {
                             👤 {user?.email}
                         </div>
 
-                        <AdminProductForm />
-
-                        {/* REVIEWS MANAGEMENT */}
-                        <div className="admin-section">
-                            <h3>⭐ রিভিউ ম্যানেজ</h3>
-
-                            <div className="admin-review-tabs">
-                                <button
-                                    type="button"
-                                    className={`admin-review-tab ${reviewFilter === 'pending' ? 'active' : ''}`}
-                                    onClick={() => setReviewFilter('pending')}
-                                >
-                                    ⏳ অপেক্ষমাণ ({pendingReviews.length})
-                                </button>
-                                <button
-                                    type="button"
-                                    className={`admin-review-tab ${reviewFilter === 'approved' ? 'active' : ''}`}
-                                    onClick={() => setReviewFilter('approved')}
-                                >
-                                    ✅ অনুমোদিত ({approvedReviews.length})
-                                </button>
-                            </div>
-
-                            <div className="admin-review-list">
-                                {reviewLoading ? (
-                                    <div className="admin-status">
-                                        রিভিউ লোড হচ্ছে...
-                                    </div>
-                                ) : visibleReviews.length === 0 ? (
-                                    <div className="admin-status">
-                                        {reviewFilter === 'pending'
-                                            ? 'কোনো অপেক্ষমাণ রিভিউ নেই।'
-                                            : 'কোনো অনুমোদিত রিভিউ নেই।'}
-                                    </div>
-                                ) : (
-                                    visibleReviews.map((r) => (
-                                        <div key={r.id} className="admin-review-item">
-                                            <div className="admin-review-head">
-                                                <div>
-                                                    <strong>{r.customerName}</strong>
-                                                    <div
-                                                        style={{
-                                                            fontSize: '0.72rem',
-                                                            color: '#888',
-                                                            marginTop: '2px'
-                                                        }}
-                                                    >
-                                                        {r.productName}
-                                                    </div>
-                                                </div>
-                                                <StarRating
-                                                    value={r.rating}
-                                                    readOnly
-                                                    size="0.85rem"
-                                                />
-                                            </div>
-
-                                            <p className="admin-review-comment">
-                                                {r.comment}
-                                            </p>
-
-                                            {r.customerPhone && (
-                                                <div
-                                                    style={{
-                                                        fontSize: '0.7rem',
-                                                        color: '#888',
-                                                        marginTop: '4px'
-                                                    }}
-                                                >
-                                                    📞 {r.customerPhone}
-                                                </div>
-                                            )}
-
-                                            <div className="admin-review-actions">
-                                                {!r.approved ? (
-                                                    <button
-                                                        type="button"
-                                                        className="admin-approve-btn"
-                                                        onClick={() => handleApprove(r.id, true)}
-                                                    >
-                                                        ✅ Approve
-                                                    </button>
-                                                ) : (
-                                                    <button
-                                                        type="button"
-                                                        className="admin-unapprove-btn"
-                                                        onClick={() => handleApprove(r.id, false)}
-                                                    >
-                                                        ↩️ Unapprove
-                                                    </button>
-                                                )}
-
-                                                <button
-                                                    type="button"
-                                                    className="admin-delete-btn"
-                                                    onClick={() =>
-                                                        handleDeleteReview(r.id, r.customerName)
-                                                    }
-                                                >
-                                                    🗑️ Delete
-                                                </button>
-                                            </div>
-                                        </div>
-                                    ))
-                                )}
-                            </div>
+                        {/* ==========================================
+                            Tab Navigation
+                            ========================================== */}
+                        <div className="admin-tabs-nav">
+                            <button
+                                type="button"
+                                className={`admin-tab-btn ${activeTab === 'products' ? 'active' : ''}`}
+                                onClick={() => setActiveTab('products')}
+                            >
+                                🛒 প্রোডাক্ট
+                            </button>
+                            <button
+                                type="button"
+                                className={`admin-tab-btn ${activeTab === 'orders' ? 'active' : ''}`}
+                                onClick={() => setActiveTab('orders')}
+                            >
+                                📦 অর্ডার
+                            </button>
+                            <button
+                                type="button"
+                                className={`admin-tab-btn ${activeTab === 'reviews' ? 'active' : ''}`}
+                                onClick={() => setActiveTab('reviews')}
+                            >
+                                ⭐ রিভিউ
+                            </button>
+                            <button
+                                type="button"
+                                className={`admin-tab-btn ${activeTab === 'coupons' ? 'active' : ''}`}
+                                onClick={() => setActiveTab('coupons')}
+                            >
+                                🎟️ কুপন
+                            </button>
+                            <button
+                                type="button"
+                                className={`admin-tab-btn ${activeTab === 'affiliate' ? 'active' : ''}`}
+                                onClick={() => setActiveTab('affiliate')}
+                            >
+                                🎁 এফিলিয়েট
+                            </button>
+                            <button
+                                type="button"
+                                className={`admin-tab-btn ${activeTab === 'settings' ? 'active' : ''}`}
+                                onClick={() => setActiveTab('settings')}
+                            >
+                                ⚙️ সেটিংস
+                            </button>
                         </div>
 
-                        {/* 🆕 COUPONS MANAGEMENT */}
-                        <AdminCoupons />
+                        {/* ==========================================
+                            Tab Contents
+                            ========================================== */}
 
                         {/* PRODUCTS */}
-                        <div className="admin-section">
-                            <h3>🗑️ প্রোডাক্ট ম্যানেজ</h3>
-                            <div className="admin-product-list">
-                                {products.length === 0 ? (
-                                    <div className="admin-status">
-                                        এখনো কোনো প্রোডাক্ট যোগ করা হয়নি।
-                                    </div>
-                                ) : (
-                                    products.map((p) => (
-                                        <div
-                                            key={p.firebaseDocId || p.id}
-                                            className="admin-product-item"
-                                        >
-                                            <img
-                                                src={p.img}
-                                                alt={p.name}
-                                                onError={(e) => {
-                                                    e.target.style.background = '#f0e4f5';
-                                                }}
-                                            />
-                                            <div className="admin-product-meta">
-                                                <strong>{p.name}</strong>
-                                                <small>
-                                                    {p.cat} • {formatPrice(p.price)}
-                                                </small>
+                        {activeTab === 'products' && (
+                            <>
+                                <AdminProductForm />
+                                <div className="admin-section">
+                                    <h3>🗑️ প্রোডাক্ট ম্যানেজ</h3>
+                                    <div className="admin-product-list">
+                                        {products.length === 0 ? (
+                                            <div className="admin-status">
+                                                এখনো কোনো প্রোডাক্ট যোগ করা হয়নি।
                                             </div>
-                                            <button
-                                                type="button"
-                                                className="admin-delete-btn"
-                                                disabled={deleting === p.firebaseDocId}
-                                                onClick={() =>
-                                                    handleDelete(p.firebaseDocId, p.name)
-                                                }
-                                            >
-                                                {deleting === p.firebaseDocId
-                                                    ? 'ডিলিট হচ্ছে...'
-                                                    : '🗑️ ডিলিট'}
-                                            </button>
-                                        </div>
-                                    ))
-                                )}
-                            </div>
-                        </div>
+                                        ) : (
+                                            products.map((p) => (
+                                                <div
+                                                    key={p.firebaseDocId || p.id}
+                                                    className="admin-product-item"
+                                                >
+                                                    <img
+                                                        src={p.img}
+                                                        alt={p.name}
+                                                        onError={(e) => {
+                                                            e.target.style.background =
+                                                                '#f0e4f5';
+                                                        }}
+                                                    />
+                                                    <div className="admin-product-meta">
+                                                        <strong>{p.name}</strong>
+                                                        <small>
+                                                            {p.cat} •{' '}
+                                                            {formatPrice(p.price)}
+                                                        </small>
+                                                    </div>
+                                                    <button
+                                                        type="button"
+                                                        className="admin-delete-btn"
+                                                        disabled={
+                                                            deleting === p.firebaseDocId
+                                                        }
+                                                        onClick={() =>
+                                                            handleDelete(
+                                                                p.firebaseDocId,
+                                                                p.name
+                                                            )
+                                                        }
+                                                    >
+                                                        {deleting === p.firebaseDocId
+                                                            ? 'ডিলিট হচ্ছে...'
+                                                            : '🗑️ ডিলিট'}
+                                                    </button>
+                                                </div>
+                                            ))
+                                        )}
+                                    </div>
+                                </div>
+                            </>
+                        )}
 
+                        {/* ORDERS */}
+                        {activeTab === 'orders' && <AdminOrders />}
+
+                        {/* REVIEWS */}
+                        {activeTab === 'reviews' && (
+                            <div className="admin-section">
+                                <h3>⭐ রিভিউ ম্যানেজ</h3>
+
+                                <div className="admin-review-tabs">
+                                    <button
+                                        type="button"
+                                        className={`admin-review-tab ${reviewFilter === 'pending' ? 'active' : ''}`}
+                                        onClick={() => setReviewFilter('pending')}
+                                    >
+                                        ⏳ অপেক্ষমাণ ({pendingReviews.length})
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className={`admin-review-tab ${reviewFilter === 'approved' ? 'active' : ''}`}
+                                        onClick={() => setReviewFilter('approved')}
+                                    >
+                                        ✅ অনুমোদিত ({approvedReviews.length})
+                                    </button>
+                                </div>
+
+                                <div className="admin-review-list">
+                                    {reviewLoading ? (
+                                        <div className="admin-status">
+                                            রিভিউ লোড হচ্ছে...
+                                        </div>
+                                    ) : visibleReviews.length === 0 ? (
+                                        <div className="admin-status">
+                                            {reviewFilter === 'pending'
+                                                ? 'কোনো অপেক্ষমাণ রিভিউ নেই।'
+                                                : 'কোনো অনুমোদিত রিভিউ নেই।'}
+                                        </div>
+                                    ) : (
+                                        visibleReviews.map((r) => (
+                                            <div
+                                                key={r.id}
+                                                className="admin-review-item"
+                                            >
+                                                <div className="admin-review-head">
+                                                    <div>
+                                                        <strong>
+                                                            {r.customerName}
+                                                        </strong>
+                                                        <div
+                                                            style={{
+                                                                fontSize: '0.72rem',
+                                                                color: '#888',
+                                                                marginTop: '2px'
+                                                            }}
+                                                        >
+                                                            {r.productName}
+                                                        </div>
+                                                    </div>
+                                                    <StarRating
+                                                        value={r.rating}
+                                                        readOnly
+                                                        size="0.85rem"
+                                                    />
+                                                </div>
+
+                                                <p className="admin-review-comment">
+                                                    {r.comment}
+                                                </p>
+
+                                                {r.customerPhone && (
+                                                    <div
+                                                        style={{
+                                                            fontSize: '0.7rem',
+                                                            color: '#888',
+                                                            marginTop: '4px'
+                                                        }}
+                                                    >
+                                                        📞 {r.customerPhone}
+                                                    </div>
+                                                )}
+
+                                                <div className="admin-review-actions">
+                                                    {!r.approved ? (
+                                                        <button
+                                                            type="button"
+                                                            className="admin-approve-btn"
+                                                            onClick={() =>
+                                                                handleApprove(
+                                                                    r.id,
+                                                                    true
+                                                                )
+                                                            }
+                                                        >
+                                                            ✅ Approve
+                                                        </button>
+                                                    ) : (
+                                                        <button
+                                                            type="button"
+                                                            className="admin-unapprove-btn"
+                                                            onClick={() =>
+                                                                handleApprove(
+                                                                    r.id,
+                                                                    false
+                                                                )
+                                                            }
+                                                        >
+                                                            ↩️ Unapprove
+                                                        </button>
+                                                    )}
+
+                                                    <button
+                                                        type="button"
+                                                        className="admin-delete-btn"
+                                                        onClick={() =>
+                                                            handleDeleteReview(
+                                                                r.id,
+                                                                r.customerName
+                                                            )
+                                                        }
+                                                    >
+                                                        🗑️ Delete
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        ))
+                                    )}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* COUPONS */}
+                        {activeTab === 'coupons' && <AdminCoupons />}
+
+                        {/* AFFILIATE */}
+                        {activeTab === 'affiliate' && (
+                            <>
+                                <AdminWithdrawals />
+                                <AdminAffiliates />
+                            </>
+                        )}
+
+                        {/* SETTINGS */}
+                        {activeTab === 'settings' && <AdminAffiliateSettings />}
+
+                        {/* LOGOUT */}
                         <div className="admin-section">
                             <button
                                 type="button"

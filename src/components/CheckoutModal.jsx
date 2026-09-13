@@ -1,17 +1,23 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useCart } from '../context/CartContext.jsx';
 import { useProducts } from '../context/ProductContext.jsx';
+import { useAffiliate } from '../context/AffiliateContext.jsx';
 import { paymentMethods, getDeliveryCharge } from '../data/paymentMethods.js';
 import { districts } from '../data/districts.js';
 import { SITE, WEB3FORMS_KEY } from '../data/siteConfig.js';
 import { formatPrice } from '../utils/formatPrice.js';
 import { incrementCouponUsage } from '../firebase/coupons.js';
+import { getSettings } from '../firebase/settings.js';
+import { saveOrder } from '../firebase/orders.js';
+import { findAffiliateByCode, getSavedReferral } from '../firebase/affiliates.js';
 import CouponInput from './CouponInput.jsx';
 
 export default function CheckoutModal({ open, onClose }) {
     const { cart, clearCart } = useCart();
     const { products } = useProducts();
+    const { user: affiliateUser, isLoggedIn: isAffiliateLoggedIn } = useAffiliate();
 
+    /* ---------- Form state ---------- */
     const [name, setName] = useState('');
     const [phone, setPhone] = useState('');
     const [address, setAddress] = useState('');
@@ -24,9 +30,22 @@ export default function CheckoutModal({ open, onClose }) {
     const [submitError, setSubmitError] = useState('');
     const [successOrderId, setSuccessOrderId] = useState(null);
 
+    /* ---------- Coupon ---------- */
     const [appliedCoupon, setAppliedCoupon] = useState(null);
     const [couponDiscount, setCouponDiscount] = useState(0);
 
+    /* ---------- Referral ---------- */
+    const [referrer, setReferrer] = useState(null);
+    const [referralDiscount, setReferralDiscount] = useState(0);
+
+    /* ---------- Settings (Admin-সেট %) ---------- */
+    const [settings, setSettings] = useState({
+        customerDiscountPercent: 10,
+        referrerCommissionPercent: 5,
+        minWithdrawal: 50
+    });
+
+    /* ---------- Cart items ---------- */
     const entries = Object.entries(cart).filter(([, qty]) => qty > 0);
     const items = entries
         .map(([id, qty]) => {
@@ -41,9 +60,66 @@ export default function CheckoutModal({ open, onClose }) {
     );
 
     const shipping = getDeliveryCharge(district);
-    const discount = couponDiscount;
-    const total = Math.max(0, subtotal - discount + shipping);
+    const totalDiscount = couponDiscount + referralDiscount;
+    const total = Math.max(0, subtotal - totalDiscount + shipping);
 
+    /* ============================================================
+       Referral code থেকে ছাড়
+       ============================================================ */
+    useEffect(() => {
+        if (!open) return;
+
+        const refCode = getSavedReferral();
+        if (!refCode) {
+            setReferrer(null);
+            setReferralDiscount(0);
+            return;
+        }
+
+        /* যদি ইউজার নিজেই referrer হয়, তাহলে ছাড় পাবে না */
+        if (isAffiliateLoggedIn && affiliateUser?.referralCode === refCode) {
+            setReferrer(null);
+            setReferralDiscount(0);
+            return;
+        }
+
+        findAffiliateByCode(refCode).then((u) => {
+            if (u) {
+                setReferrer({
+                    uid: u.uid,
+                    name: u.name,
+                    referralCode: u.referralCode
+                });
+            }
+        });
+    }, [open, isAffiliateLoggedIn, affiliateUser]);
+
+    /* ============================================================
+       Settings + Referral Discount হিসাব
+       ============================================================ */
+    useEffect(() => {
+        if (!open) return;
+
+        getSettings().then((s) => {
+            setSettings(s);
+        });
+    }, [open]);
+
+    useEffect(() => {
+        if (!referrer || subtotal === 0) {
+            setReferralDiscount(0);
+            return;
+        }
+
+        const disc = Math.round(
+            (subtotal * settings.customerDiscountPercent) / 100
+        );
+        setReferralDiscount(disc);
+    }, [referrer, subtotal, settings.customerDiscountPercent]);
+
+    /* ============================================================
+       Reset
+       ============================================================ */
     const resetForm = () => {
         setName('');
         setPhone('');
@@ -77,24 +153,45 @@ export default function CheckoutModal({ open, onClose }) {
         setCouponDiscount(0);
     };
 
+    /* ============================================================
+       Validation
+       ============================================================ */
     const validate = () => {
         const e = {};
         if (!name.trim()) e.name = 'নাম লিখুন';
         if (!phone.trim()) e.phone = 'ফোন নম্বর লিখুন';
         if (!address.trim()) e.address = 'ঠিকানা লিখুন';
         if (!district) e.district = 'জেলা নির্বাচন করুন';
-        if (payment !== 'cod' && !trxId.trim()) {
+        if (payment !== 'cod' && payment !== 'wallet' && !trxId.trim()) {
             e.trxId = 'ট্রানজেকশন আইডি লিখুন';
         }
         setErrors(e);
         return Object.keys(e).length === 0;
     };
 
+    /* ============================================================
+       Submit
+       ============================================================ */
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         if (!validate()) return;
         if (items.length === 0) return;
+
+        /* Wallet Payment — Balance চেক */
+        if (payment === 'wallet') {
+            const walletBalance = Number(affiliateUser?.walletBalance) || 0;
+            if (!isAffiliateLoggedIn) {
+                setSubmitError('Wallet দিয়ে পেমেন্ট করতে আগে লগইন করুন');
+                return;
+            }
+            if (walletBalance < total) {
+                setSubmitError(
+                    `আপনার ওয়ালেটে পর্যাপ্ত টাকা নেই। ব্যালেন্স: ${formatPrice(walletBalance)}`
+                );
+                return;
+            }
+        }
 
         setSubmitting(true);
         setSubmitError('');
@@ -113,6 +210,34 @@ export default function CheckoutModal({ open, onClose }) {
         const paymentLabel =
             paymentMethods.find((pm) => pm.id === payment)?.label || '';
 
+        /* ---------- Firestore-এ অর্ডার সেভ ---------- */
+        const orderData = {
+            orderId,
+            name: name.trim(),
+            phone: phone.trim(),
+            address: address.trim(),
+            district,
+            items: items.map(({ product, qty }) => ({
+                id: product.id,
+                name: product.name,
+                price: product.price,
+                qty
+            })),
+            subtotal,
+            couponCode: appliedCoupon?.code || null,
+            couponDiscount,
+            referralCode: referrer?.referralCode || null,
+            referrerUid: referrer?.uid || null,
+            referralDiscount,
+            shipping,
+            total,
+            payment,
+            trxId: trxId || '',
+            buyerUid: affiliateUser?.uid || null,
+            buyerEmail: affiliateUser?.email || null
+        };
+
+        /* ---------- Web3Forms-এ ইমেইল ---------- */
         const payload = {
             access_key: WEB3FORMS_KEY,
             subject: `নতুন অর্ডার — ${orderId} (${SITE.name})`,
@@ -125,14 +250,25 @@ export default function CheckoutModal({ open, onClose }) {
             'পণ্যসমূহ': itemsList,
             'উপমোট': formatPrice(subtotal),
             'কুপন কোড': appliedCoupon ? appliedCoupon.code : 'প্রযোজ্য নয়',
-            'কুপন ছাড়': discount > 0 ? `-${formatPrice(discount)}` : 'প্রযোজ্য নয়',
+            'কুপন ছাড়': couponDiscount > 0 ? `-${formatPrice(couponDiscount)}` : 'প্রযোজ্য নয়',
+            'রেফারেল কোড': referrer ? referrer.referralCode : 'প্রযোজ্য নয়',
+            'রেফারেল ছাড়': referralDiscount > 0 ? `-${formatPrice(referralDiscount)}` : 'প্রযোজ্য নয়',
             'ডেলিভারি চার্জ': formatPrice(shipping),
             'সর্বমোট': formatPrice(total),
-            'পেমেন্ট মাধ্যম': paymentLabel,
-            'ট্রানজেকশন আইডি': trxId || 'প্রযোজ্য নয় (COD)'
+            'পেমেন্ট মাধ্যম': payment === 'wallet' ? 'Wallet' : paymentLabel,
+            'ট্রানজেকশন আইডি': trxId || 'প্রযোজ্য নয়'
         };
 
         try {
+            /* ১. Firestore-এ অর্ডার সেভ */
+            await saveOrder(orderData);
+
+            /* ২. কুপন ব্যবহার বাড়াই */
+            if (appliedCoupon && appliedCoupon.id) {
+                await incrementCouponUsage(appliedCoupon.id);
+            }
+
+            /* ৩. Web3Forms-এ পাঠাই */
             const res = await fetch('https://api.web3forms.com/submit', {
                 method: 'POST',
                 headers: {
@@ -141,14 +277,11 @@ export default function CheckoutModal({ open, onClose }) {
                 },
                 body: JSON.stringify(payload)
             });
+
             const result = await res.json();
 
             if (!result.success) {
-                throw new Error(result.message || 'পাঠানো যায়নি');
-            }
-
-            if (appliedCoupon && appliedCoupon.id) {
-                await incrementCouponUsage(appliedCoupon.id);
+                console.warn('Web3Forms failed but order saved:', result);
             }
 
             setSuccessOrderId(orderId);
@@ -163,6 +296,21 @@ export default function CheckoutModal({ open, onClose }) {
     if (!open) return null;
 
     const pm = paymentMethods.find((p) => p.id === payment);
+    const walletBalance = Number(affiliateUser?.walletBalance) || 0;
+
+    /* Wallet payment option — শুধু লগইন কাস্টমারের জন্য */
+    const paymentOptions = isAffiliateLoggedIn
+        ? [
+              ...paymentMethods,
+              {
+                  id: 'wallet',
+                  label: 'Wallet',
+                  number: '',
+                  wallet: true,
+                  balance: walletBalance
+              }
+          ]
+        : paymentMethods;
 
     return (
         <div className="modal-overlay open" onClick={handleClose}>
@@ -278,6 +426,14 @@ export default function CheckoutModal({ open, onClose }) {
                             )}
                         </div>
 
+                        {/* 🎁 Referral notice */}
+                        {referrer && referralDiscount > 0 && (
+                            <div className="checkout-referral-notice">
+                                🎁 <b>{referrer.name}</b> এর রেফারেলে{' '}
+                                <b>{settings.customerDiscountPercent}%</b> ছাড় পাচ্ছেন!
+                            </div>
+                        )}
+
                         <CouponInput
                             subtotal={subtotal}
                             appliedCoupon={appliedCoupon}
@@ -288,7 +444,7 @@ export default function CheckoutModal({ open, onClose }) {
                         <div className="field">
                             <label>পেমেন্ট মাধ্যম বেছে নিন</label>
                             <div className="payment-methods">
-                                {paymentMethods.map((opt) => (
+                                {paymentOptions.map((opt) => (
                                     <label
                                         key={opt.id}
                                         className={`payment-option ${
@@ -305,18 +461,24 @@ export default function CheckoutModal({ open, onClose }) {
                                             onChange={() => setPayment(opt.id)}
                                         />
                                         <div className="pm-logo">
-                                            {opt.id === 'cod' ? '৳ ক্যাশ' : opt.label}
+                                            {opt.id === 'cod'
+                                                ? '৳ ক্যাশ'
+                                                : opt.id === 'wallet'
+                                                ? '💰 ওয়ালেট'
+                                                : opt.label}
                                         </div>
                                         <div className="pm-label">
                                             {opt.id === 'cod'
                                                 ? 'ক্যাশ অন ডেলিভারি'
+                                                : opt.id === 'wallet'
+                                                ? `ব্যালেন্স: ${formatPrice(walletBalance)}`
                                                 : opt.label}
                                         </div>
                                     </label>
                                 ))}
                             </div>
 
-                            {payment !== 'cod' && pm && (
+                            {payment !== 'cod' && payment !== 'wallet' && pm && (
                                 <div className="payment-number-box show">
                                     <b>{pm.label}</b> নাম্বারে (Send Money) টাকা
                                     পাঠান: <b>{pm.number}</b>। পাঠানোর পর
@@ -324,7 +486,16 @@ export default function CheckoutModal({ open, onClose }) {
                                 </div>
                             )}
 
-                            {payment !== 'cod' && (
+                            {payment === 'wallet' && (
+                                <div className="payment-number-box show">
+                                    💰 আপনার ওয়ালেট ব্যালেন্স:{' '}
+                                    <b>{formatPrice(walletBalance)}</b>
+                                    {' • '}
+                                    অর্ডার করলে ব্যালেন্স থেকে কেটে নেওয়া হবে।
+                                </div>
+                            )}
+
+                            {payment !== 'cod' && payment !== 'wallet' && (
                                 <div className="field" style={{ marginTop: 12 }}>
                                     <label>ট্রানজেকশন আইডি (TrxID)</label>
                                     <input
@@ -346,18 +517,30 @@ export default function CheckoutModal({ open, onClose }) {
                                 <span>উপমোট</span>
                                 <span>{formatPrice(subtotal)}</span>
                             </div>
-                            {discount > 0 && (
+
+                            {couponDiscount > 0 && (
                                 <div className="row coupon-discount-row">
                                     <span>🎟️ কুপন ছাড় ({appliedCoupon?.code})</span>
                                     <span className="coupon-discount-value">
-                                        -{formatPrice(discount)}
+                                        -{formatPrice(couponDiscount)}
                                     </span>
                                 </div>
                             )}
+
+                            {referralDiscount > 0 && (
+                                <div className="row coupon-discount-row">
+                                    <span>🎁 রেফারেল ছাড় ({referrer?.referralCode})</span>
+                                    <span className="coupon-discount-value">
+                                        -{formatPrice(referralDiscount)}
+                                    </span>
+                                </div>
+                            )}
+
                             <div className="row">
                                 <span>ডেলিভারি চার্জ</span>
                                 <span>{formatPrice(shipping)}</span>
                             </div>
+
                             <div className="row total">
                                 <span>সর্বমোট</span>
                                 <span>{formatPrice(total)}</span>

@@ -1,5 +1,4 @@
-import { useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { SITE } from '../data/siteConfig.js';
 import { useCart } from '../context/CartContext.jsx';
 import { useAffiliate } from '../context/AffiliateContext.jsx';
@@ -21,7 +20,9 @@ export default function Header({
 
     const isAdminLoggedIn = adminLabel === 'Admin';
 
-    /* 🆕 সরাসরি লগআউট */
+    /* 🆕 অ্যাডমিন হলে কাস্টমার UI দেখাবে না */
+    const showCustomerUI = isAffiliateLoggedIn && !isAdminLoggedIn;
+
     const handleAffiliateLogout = async () => {
         try {
             await logout();
@@ -55,17 +56,33 @@ export default function Header({
                     <SearchBar />
 
                     {/* ==========================================
-                        🎁 কাস্টমার — নাম (ড্যাশবোর্ড লিংক)
+                        🎁 Customer Dashboard — শুধু Customer-এর জন্য
                         ========================================== */}
-                    {isAffiliateLoggedIn ? (
-                        <Link
-                            to="/dashboard"
-                            className="affiliate-btn-logged"
-                            title={affiliateUser?.name || 'ড্যাশবোর্ড'}
-                        >
-                            🎁 {affiliateFirstName}
-                        </Link>
-                    ) : (
+                    {showCustomerUI && (
+                        <>
+                            <Link
+                                to="/dashboard"
+                                className="affiliate-btn-logged"
+                                title={affiliateUser?.name || 'ড্যাশবোর্ড'}
+                            >
+                                🎁 {affiliateFirstName}
+                            </Link>
+
+                            <button
+                                type="button"
+                                className="affiliate-logout-btn"
+                                onClick={handleAffiliateLogout}
+                                title="লগআউট করুন"
+                            >
+                                🚪 লগআউট
+                            </button>
+                        </>
+                    )}
+
+                    {/* ==========================================
+                        🎁 Signup Button — শুধু কেউ লগইন না থাকলে
+                        ========================================== */}
+                    {!isAffiliateLoggedIn && !isAdminLoggedIn && (
                         <Link
                             to="/signup"
                             className="affiliate-btn-signup"
@@ -76,23 +93,9 @@ export default function Header({
                     )}
 
                     {/* ==========================================
-                        🆕 সরাসরি লগআউট বাটন (কাস্টমার লগইন থাকলে)
+                        🔐 Login Button — Admin লগইন না থাকলে
                         ========================================== */}
-                    {isAffiliateLoggedIn && (
-                        <button
-                            type="button"
-                            className="affiliate-logout-btn"
-                            onClick={handleAffiliateLogout}
-                            title="লগআউট করুন"
-                        >
-                            🚪 লগআউট
-                        </button>
-                    )}
-
-                    {/* ==========================================
-                        🔐 Admin — শুধু কাস্টমার লগইন না থাকলে
-                        ========================================== */}
-                    {!isAffiliateLoggedIn && (
+                    {!isAdminLoggedIn && (
                         <button
                             className="admin-btn"
                             type="button"
@@ -102,14 +105,17 @@ export default function Header({
                         </button>
                     )}
 
+                    {/* ==========================================
+                        ⚙️ Admin Dashboard — Admin লগইন থাকলে
+                        ========================================== */}
                     {isAdminLoggedIn && (
                         <button
-                            className="admin-btn logged-in"
+                            className="admin-btn admin-dashboard-btn"
                             type="button"
                             onClick={onAdminClick}
-                            title="Admin Panel বন্ধ করুন"
+                            title="Admin Dashboard"
                         >
-                            🔐 Admin
+                            ⚙️ Dashboard
                         </button>
                     )}
 

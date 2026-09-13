@@ -3240,3 +3240,752 @@ footer {
         width: 100%;
     }
 }
+
+/* ============================================================
+   CHECKOUT — Referral Notice
+   ============================================================ */
+
+.checkout-referral-notice {
+    background: linear-gradient(135deg, #fff8e1, #ffe0b2);
+    color: #e65100;
+    padding: 12px 16px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 14px;
+    border: 1px solid #ffe0b2;
+    text-align: center;
+}
+
+/* ============================================================
+   PAYMENT — Wallet Option
+   ============================================================ */
+
+.payment-option[data-method="wallet"] .pm-logo {
+    background: linear-gradient(135deg, #6b1d8e, #d81b60);
+}
+
+.payment-option[data-method="wallet"] .pm-label {
+    font-size: 0.68rem;
+}
+
+/* ============================================================
+   WITHDRAW MODAL
+   ============================================================ */
+
+.withdraw-close-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--light-bg);
+    color: #888;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s;
+}
+
+.withdraw-close-btn:hover {
+    background: #f0e4f5;
+    color: var(--primary-pink);
+}
+
+.modal {
+    position: relative;
+}
+
+.withdraw-balance-info {
+    background: linear-gradient(135deg, #fdf7ff, #fff8f0);
+    border: 1px solid #f0e4f5;
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+.withdraw-balance-label {
+    font-size: 0.8rem;
+    color: #888;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.withdraw-balance-value {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--primary-purple);
+    line-height: 1;
+}
+
+.withdraw-error {
+    background: #fdeaea;
+    color: #b71c1c;
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 14px;
+    text-align: center;
+}
+
+.withdraw-hint {
+    font-size: 0.72rem;
+    color: #999;
+    margin-top: 4px;
+}
+
+.withdraw-methods {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+.withdraw-method-btn {
+    padding: 10px 8px;
+    border-radius: 10px;
+    border: 2px solid #e0d5e8;
+    background: #fff;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: 0.2s;
+    color: #555;
+}
+
+.withdraw-method-btn:hover {
+    border-color: var(--primary-pink);
+}
+
+.withdraw-method-btn.active {
+    font-weight: 800;
+}
+
+.withdraw-success-box {
+    text-align: center;
+    padding: 20px 10px;
+}
+
+/* ============================================================
+   DASHBOARD — Withdraw Section
+   ============================================================ */
+
+.dashboard-withdraw-card {
+    background: linear-gradient(135deg, #fff, #fdf7ff);
+    border: 1.5px solid #f0e4f5;
+}
+
+.withdraw-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.withdraw-sub-text {
+    font-size: 0.82rem;
+    color: #888;
+    margin: 0;
+}
+
+.withdraw-main-btn {
+    padding: 12px 22px;
+    border-radius: 25px;
+    background: var(--gradient-main);
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.88rem;
+    cursor: pointer;
+    border: none;
+    transition: 0.2s;
+    white-space: nowrap;
+}
+
+.withdraw-main-btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(216, 27, 96, 0.25);
+}
+
+.withdraw-main-btn:disabled {
+    background: #ddd;
+    color: #999;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+}
+
+/* ============================================================
+   DASHBOARD — Withdraw History
+   ============================================================ */
+
+.withdraw-history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.withdraw-history-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border: 1px solid #f0e4f5;
+    border-radius: 12px;
+    background: #fdfaff;
+}
+
+.withdraw-history-left {
+    flex: 1;
+    min-width: 0;
+}
+
+.withdraw-history-amount {
+    font-weight: 800;
+    font-size: 1rem;
+    color: var(--primary-purple);
+    margin-bottom: 3px;
+}
+
+.withdraw-history-method {
+    font-size: 0.78rem;
+    color: #666;
+    margin-bottom: 2px;
+}
+
+.withdraw-history-date {
+    font-size: 0.7rem;
+    color: #999;
+}
+
+.withdraw-history-status {
+    font-weight: 700;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* ============================================================
+   RESPONSIVE — Withdraw
+   ============================================================ */
+
+@media (max-width: 480px) {
+    .withdraw-header-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .withdraw-main-btn {
+        width: 100%;
+    }
+
+    .withdraw-history-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .withdraw-history-status {
+        align-self: flex-end;
+    }
+
+    .withdraw-methods {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ============================================================
+   ADMIN — Tab Navigation
+   ============================================================ */
+
+.admin-tabs-nav {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid #f0e4f5;
+    scrollbar-width: thin;
+}
+
+.admin-tabs-nav::-webkit-scrollbar {
+    height: 4px;
+}
+
+.admin-tabs-nav::-webkit-scrollbar-thumb {
+    background: #e0d5e8;
+    border-radius: 2px;
+}
+
+.admin-tab-btn {
+    padding: 9px 14px;
+    border-radius: 20px;
+    background: var(--light-bg);
+    color: var(--primary-purple);
+    font-weight: 700;
+    font-size: 0.78rem;
+    cursor: pointer;
+    border: none;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: 0.2s;
+    font-family: inherit;
+}
+
+.admin-tab-btn:hover {
+    background: #f0e4f5;
+}
+
+.admin-tab-btn.active {
+    background: var(--gradient-main);
+    color: #fff;
+}
+
+/* ============================================================
+   ADMIN — Withdraw List
+   ============================================================ */
+
+.admin-withdraw-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 500px;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.admin-withdraw-item {
+    padding: 14px;
+    border: 1px solid #f0e4f5;
+    border-radius: 12px;
+    background: #fdfaff;
+}
+
+.admin-withdraw-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.admin-withdraw-name {
+    font-weight: 700;
+    color: #30384f;
+    font-size: 0.9rem;
+    margin-bottom: 3px;
+}
+
+.admin-withdraw-amount {
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: var(--primary-purple);
+}
+
+.admin-withdraw-status {
+    font-weight: 700;
+    font-size: 0.78rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.admin-withdraw-details {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 0.78rem;
+    padding: 10px;
+    background: #fff;
+    border-radius: 8px;
+    border: 1px solid #f0e4f5;
+    margin-bottom: 10px;
+}
+
+.admin-withdraw-actions {
+    display: flex;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.admin-withdraw-actions button {
+    flex: 1;
+    padding: 9px 12px;
+    border-radius: 8px;
+    border: none;
+    font-weight: 700;
+    font-size: 0.76rem;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.admin-withdraw-note {
+    margin-top: 8px;
+    padding: 8px 10px;
+    background: #f5f5f5;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    color: #666;
+    font-style: italic;
+}
+
+/* ============================================================
+   ADMIN — Affiliates
+   ============================================================ */
+
+.admin-affiliate-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 8px;
+    margin-bottom: 14px;
+}
+
+.admin-aff-stat-card {
+    background: linear-gradient(135deg, #fdf7ff, #fff8f0);
+    border: 1px solid #f0e4f5;
+    border-radius: 10px;
+    padding: 12px 10px;
+    text-align: center;
+}
+
+.admin-aff-stat-value {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--primary-purple);
+    margin-bottom: 2px;
+    line-height: 1.2;
+}
+
+.admin-aff-stat-label {
+    font-size: 0.68rem;
+    color: #888;
+    font-weight: 600;
+}
+
+.admin-top-referrers {
+    background: #fff8e1;
+    border: 1px solid #ffe0b2;
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 14px;
+}
+
+.admin-top-referrers h4 {
+    color: #e65100;
+    font-size: 0.85rem;
+    margin: 0 0 10px;
+    font-weight: 800;
+}
+
+.admin-top-referrer-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 0;
+    font-size: 0.82rem;
+    border-bottom: 1px dashed #ffe0b2;
+}
+
+.admin-top-referrer-item:last-child {
+    border-bottom: none;
+}
+
+.admin-top-rank {
+    font-weight: 800;
+    color: #e65100;
+    min-width: 26px;
+}
+
+.admin-top-name {
+    flex: 1;
+    color: #30384f;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.admin-top-amount {
+    font-weight: 800;
+    color: #e65100;
+    white-space: nowrap;
+}
+
+.admin-affiliate-search {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #e0d5e8;
+    border-radius: 10px;
+    font-size: 0.88rem;
+    margin-bottom: 12px;
+    outline: none;
+    font-family: inherit;
+    transition: 0.2s;
+}
+
+.admin-affiliate-search:focus {
+    border-color: var(--primary-pink);
+    box-shadow: 0 0 0 3px rgba(216, 27, 96, 0.1);
+}
+
+.admin-affiliate-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 450px;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.admin-affiliate-item {
+    padding: 12px 14px;
+    border: 1px solid #f0e4f5;
+    border-radius: 10px;
+    background: #fdfaff;
+}
+
+.admin-aff-item-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.admin-aff-name {
+    font-weight: 700;
+    color: #30384f;
+    font-size: 0.88rem;
+    margin-bottom: 2px;
+}
+
+.admin-aff-code {
+    font-size: 0.72rem;
+    color: var(--primary-purple);
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.admin-aff-balance {
+    font-weight: 800;
+    color: var(--primary-pink);
+    font-size: 0.95rem;
+    white-space: nowrap;
+}
+
+.admin-aff-item-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    font-size: 0.72rem;
+    color: #888;
+}
+
+/* ============================================================
+   ADMIN — Orders
+   ============================================================ */
+
+.admin-order-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-height: 600px;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.admin-order-item {
+    padding: 14px;
+    border: 1px solid #f0e4f5;
+    border-radius: 12px;
+    background: #fdfaff;
+}
+
+.admin-order-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed #f0e4f5;
+}
+
+.admin-order-id {
+    font-weight: 800;
+    color: var(--primary-purple);
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+    margin-bottom: 2px;
+}
+
+.admin-order-date {
+    font-size: 0.7rem;
+    color: #888;
+}
+
+.admin-order-total {
+    font-weight: 800;
+    font-size: 1.15rem;
+    color: var(--primary-pink);
+    white-space: nowrap;
+}
+
+.admin-order-customer {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    font-size: 0.78rem;
+    margin-bottom: 10px;
+    padding: 10px;
+    background: #fff;
+    border-radius: 8px;
+}
+
+.admin-order-items {
+    padding: 8px 10px;
+    background: #fff;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.admin-order-line {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    font-size: 0.78rem;
+    padding: 3px 0;
+    color: #555;
+}
+
+.admin-order-summary {
+    padding: 8px 10px;
+    background: #fff;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #f0e4f5;
+}
+
+.admin-order-sum-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    font-size: 0.78rem;
+    padding: 3px 0;
+    color: #666;
+}
+
+.admin-order-sum-row.total {
+    padding-top: 6px;
+    margin-top: 4px;
+    border-top: 1px solid #e2e2e2;
+    font-weight: 800;
+    color: var(--primary-purple);
+    font-size: 0.88rem;
+}
+
+.admin-order-meta {
+    font-size: 0.72rem;
+    color: #888;
+    margin-bottom: 10px;
+    padding: 8px 10px;
+    background: #fff8e1;
+    border-radius: 6px;
+    border-left: 3px solid var(--primary-orange);
+}
+
+.admin-order-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.admin-order-actions button {
+    flex: 1;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: none;
+    font-weight: 700;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.admin-order-delivered {
+    padding: 8px 12px;
+    background: #e8f7ec;
+    color: #16833b;
+    border-radius: 8px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-align: center;
+}
+
+/* ============================================================
+   MOBILE
+   ============================================================ */
+
+@media (max-width: 600px) {
+    .admin-tabs-nav {
+        gap: 4px;
+    }
+
+    .admin-tab-btn {
+        padding: 8px 12px;
+        font-size: 0.72rem;
+    }
+
+    .admin-affiliate-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .admin-withdraw-actions,
+    .admin-order-actions {
+        flex-direction: column;
+    }
+
+    .admin-order-head {
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .admin-order-total {
+        font-size: 1rem;
+    }
+}
+
+/* ============================================================
+   HEADER — Admin Dashboard Button
+   ============================================================ */
+
+.admin-dashboard-btn {
+    background: linear-gradient(135deg, #16833b, #22a34e) !important;
+    color: #fff;
+    font-weight: 700;
+    padding: 0.55rem 0.95rem;
+    border-radius: 25px;
+    font-size: 0.82rem;
+    white-space: nowrap;
+    cursor: pointer;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: 0.2s;
+}
+
+.admin-dashboard-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(22, 131, 59, 0.35);
+}
+
+@media (max-width: 480px) {
+    .admin-dashboard-btn {
+        padding: 0.5rem 0.7rem;
+        min-width: 44px;
+        justify-content: center;
+    }
+}
