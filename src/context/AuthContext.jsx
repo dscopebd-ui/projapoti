@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { watchAuth, loginAdmin, logoutAdmin } from '../firebase/auth.js';
+import { ADMIN_EMAILS } from '../data/siteConfig.js';
 
 const AuthContext = createContext(null);
 
@@ -9,7 +10,12 @@ export function AuthProvider({ children }) {
 
     useEffect(() => {
         const unsub = watchAuth((u) => {
-            setUser(u);
+            /* ⚠️ শুধু ADMIN_EMAILS-এ থাকা ইমেইলই অ্যাডমিন */
+            if (u && ADMIN_EMAILS.includes((u.email || '').toLowerCase())) {
+                setUser(u);
+            } else {
+                setUser(null);
+            }
             setLoading(false);
         });
         return () => unsub();

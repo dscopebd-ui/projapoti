@@ -1341,35 +1341,6 @@ footer {
 }
 
 /* ============================================================
-   HEADER RATING BADGE
-   ============================================================ */
-
-.header-rating-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    margin-top: 4px;
-    font-size: 0.72rem;
-    background: linear-gradient(135deg, #fff8e1, #ffe0b2);
-    color: #e65100;
-    padding: 2px 8px;
-    border-radius: 12px;
-    font-weight: 700;
-    border: 1px solid #ffe0b2;
-}
-
-.header-rating-star {
-    color: #ff9800;
-    font-size: 0.85rem;
-}
-
-.header-rating-count {
-    color: #999;
-    font-weight: 600;
-    font-size: 0.68rem;
-}
-
-/* ============================================================
    REVIEWS SECTION (Product Page)
    ============================================================ */
 
@@ -1609,7 +1580,6 @@ footer {
     text-align: center;
 }
 
-/* Overall Rating — compact badge */
 .home-reviews-summary {
     display: inline-flex;
     align-items: center;
@@ -1638,7 +1608,6 @@ footer {
     font-weight: 600;
 }
 
-/* DESKTOP-এ ৩ কলাম */
 .home-reviews-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -1742,7 +1711,6 @@ footer {
     border-top: 1px solid #f0e4f5;
 }
 
-/* Desktop — ৪ কলাম */
 .video-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -1765,8 +1733,6 @@ footer {
     box-shadow: 0 10px 24px rgba(107, 29, 142, 0.12);
     border-color: var(--primary-pink);
 }
-
-/* ---------- Thumbnail ---------- */
 
 .video-thumbnail {
     position: relative;
@@ -1807,8 +1773,6 @@ footer {
     line-height: 1.3;
 }
 
-/* ---------- Play Overlay ---------- */
-
 .video-play-overlay {
     position: absolute;
     inset: 0;
@@ -1844,8 +1808,6 @@ footer {
     color: #fff;
 }
 
-/* ---------- Platform Badge ---------- */
-
 .video-platform-badge {
     position: absolute;
     top: 8px;
@@ -1859,8 +1821,6 @@ footer {
     backdrop-filter: blur(4px);
     z-index: 2;
 }
-
-/* ---------- Caption ---------- */
 
 .video-caption {
     padding: 12px 14px;
@@ -1919,7 +1879,6 @@ footer {
     box-shadow: 0 20px 60px rgba(107, 29, 142, 0.25);
 }
 
-/* Regular Video (16:9) */
 .video-card-playing.is-video {
     width: min(720px, 100%);
 }
@@ -1930,7 +1889,6 @@ footer {
     background: #000;
 }
 
-/* Reels / Shorts (9:16) */
 .video-card-playing.is-reel {
     width: min(380px, 100%);
 }
@@ -1999,6 +1957,802 @@ footer {
 .video-close-btn:hover {
     background: var(--primary-pink);
     color: #fff;
+}
+
+/* ============================================================
+   COUPON — Checkout Input
+   ============================================================ */
+
+.coupon-input-section {
+    margin: 14px 0;
+    padding: 12px 14px;
+    border: 1px dashed #e0d5e8;
+    border-radius: 10px;
+    background: #fdfaff;
+}
+
+.coupon-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 700;
+    color: #30384f;
+    margin-bottom: 8px;
+}
+
+.coupon-form {
+    display: flex;
+    gap: 8px;
+}
+
+.coupon-input {
+    flex: 1;
+    padding: 10px 14px;
+    border: 1px solid #e0d5e8;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+    transition: 0.2s;
+    letter-spacing: 1px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.coupon-input:focus {
+    border-color: var(--primary-pink);
+    box-shadow: 0 0 0 3px rgba(216, 27, 96, 0.1);
+}
+
+.coupon-apply-btn {
+    padding: 10px 18px;
+    border-radius: 8px;
+    background: var(--gradient-main);
+    color: #fff;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+    border: none;
+    white-space: nowrap;
+    transition: 0.2s;
+}
+
+.coupon-apply-btn:hover:not(:disabled) {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.coupon-apply-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.coupon-error {
+    margin-top: 8px;
+    padding: 8px 12px;
+    background: #fdeaea;
+    color: #b71c1c;
+    border-radius: 8px;
+    font-size: 12.5px;
+    font-weight: 600;
+}
+
+.coupon-applied-box {
+    margin: 14px 0;
+    padding: 12px 14px;
+    background: linear-gradient(135deg, #e8f7ec, #f0fbf4);
+    border: 1px solid #c8e8d4;
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.coupon-applied-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    min-width: 0;
+}
+
+.coupon-applied-icon {
+    font-size: 1.6rem;
+    flex-shrink: 0;
+}
+
+.coupon-applied-code {
+    font-weight: 800;
+    font-size: 14.5px;
+    color: #16833b;
+    letter-spacing: 1px;
+    margin-bottom: 2px;
+}
+
+.coupon-applied-value {
+    font-size: 12px;
+    color: #4a7d5a;
+    font-weight: 600;
+}
+
+.coupon-remove-btn {
+    padding: 6px 12px;
+    border-radius: 20px;
+    background: #fff;
+    color: #b71c1c;
+    font-weight: 700;
+    font-size: 12px;
+    cursor: pointer;
+    border: 1px solid #f4c5c5;
+    transition: 0.2s;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.coupon-remove-btn:hover {
+    background: #b71c1c;
+    color: #fff;
+}
+
+.coupon-discount-row {
+    color: #16833b !important;
+    font-weight: 700;
+}
+
+.coupon-discount-value {
+    color: #16833b;
+    font-weight: 800;
+}
+
+/* ============================================================
+   ADMIN COUPON
+   ============================================================ */
+
+.admin-coupon-form {
+    padding: 14px;
+    border: 1px solid #f0e4f5;
+    border-radius: 12px;
+    background: #fdfaff;
+    margin-bottom: 10px;
+}
+
+.admin-coupon-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.admin-coupon-item {
+    padding: 12px 14px;
+    border: 1px solid #f0e4f5;
+    border-radius: 11px;
+    background: #fdfaff;
+    position: relative;
+}
+
+.admin-coupon-item.inactive {
+    opacity: 0.6;
+    background: #f5f5f5;
+}
+
+.admin-coupon-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.admin-coupon-code {
+    font-weight: 800;
+    font-size: 15px;
+    color: var(--primary-purple);
+    letter-spacing: 1.5px;
+    margin-bottom: 3px;
+}
+
+.admin-coupon-discount {
+    font-size: 12.5px;
+    color: #555;
+    font-weight: 600;
+}
+
+.admin-coupon-toggle {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: #fff;
+    border: 1px solid #e0d5e8;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: 0.2s;
+}
+
+.admin-coupon-toggle:hover {
+    background: var(--light-bg);
+    border-color: var(--primary-pink);
+}
+
+.admin-coupon-meta {
+    display: flex;
+    gap: 14px;
+    font-size: 11.5px;
+    color: #888;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+}
+
+.admin-coupon-delete {
+    padding: 6px 12px;
+    border-radius: 8px;
+    background: #fdeaea;
+    color: #b71c1c;
+    font-weight: 700;
+    font-size: 12px;
+    cursor: pointer;
+    border: none;
+    transition: 0.2s;
+}
+
+.admin-coupon-delete:hover {
+    background: #b71c1c;
+    color: #fff;
+}
+
+/* ============================================================
+   AFFILIATE — Header Button
+   ============================================================ */
+
+.affiliate-btn-signup {
+    background: linear-gradient(135deg, #ff6b6b, #ff9800);
+    color: #fff;
+    border: none;
+    padding: 0.55rem 1rem;
+    border-radius: 25px;
+    font-weight: 700;
+    font-size: 0.82rem;
+    white-space: nowrap;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: 0.2s;
+    text-decoration: none;
+}
+
+.affiliate-btn-signup:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(255, 152, 0, 0.35);
+}
+
+.affiliate-btn-logged {
+    background: linear-gradient(135deg, #16833b, #22a34e);
+    color: #fff;
+    padding: 0.55rem 1rem;
+    border-radius: 25px;
+    font-weight: 700;
+    font-size: 0.82rem;
+    white-space: nowrap;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: 0.2s;
+    max-width: 140px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.affiliate-btn-logged:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(22, 131, 59, 0.35);
+}
+
+/* ============================================================
+   AFFILIATE — Logout Button (Direct)
+   ============================================================ */
+
+.affiliate-logout-btn {
+    background: #fff;
+    color: #b71c1c;
+    border: 1.5px solid #f4c5c5;
+    padding: 0.55rem 0.9rem;
+    border-radius: 25px;
+    font-weight: 700;
+    font-size: 0.82rem;
+    white-space: nowrap;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: 0.2s;
+}
+
+.affiliate-logout-btn:hover {
+    background: #b71c1c;
+    color: #fff;
+    border-color: #b71c1c;
+}
+
+/* ============================================================
+   AFFILIATE — Referral Banner
+   ============================================================ */
+
+.referral-banner {
+    max-width: 1200px;
+    margin: 1rem auto 0;
+    padding: 0 1rem;
+    animation: slideDown 0.4s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.referral-banner-content {
+    background: linear-gradient(135deg, #ff6b6b, #ff9800);
+    color: #fff;
+    border-radius: 14px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    box-shadow: 0 8px 24px rgba(255, 107, 107, 0.25);
+}
+
+.referral-banner-icon {
+    font-size: 2rem;
+    flex-shrink: 0;
+}
+
+.referral-banner-title {
+    font-weight: 800;
+    font-size: 0.95rem;
+    margin-bottom: 2px;
+}
+
+.referral-banner-sub {
+    font-size: 0.78rem;
+    opacity: 0.9;
+}
+
+.referral-banner-close {
+    margin-left: auto;
+    background: rgba(255, 255, 255, 0.25);
+    color: #fff;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: none;
+    font-size: 14px;
+    cursor: pointer;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s;
+}
+
+.referral-banner-close:hover {
+    background: rgba(255, 255, 255, 0.4);
+}
+
+/* ============================================================
+   AUTH PAGES (Signup & Login)
+   ============================================================ */
+
+.auth-page {
+    min-height: 70vh;
+    padding: 3rem 1rem;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    background: var(--light-bg);
+}
+
+.auth-container {
+    width: min(480px, 100%);
+    background: #fff;
+    border-radius: 20px;
+    padding: 32px 28px;
+    box-shadow: 0 10px 40px rgba(107, 29, 142, 0.1);
+    border: 1px solid #f0e4f5;
+}
+
+.auth-head {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.auth-head h1 {
+    color: var(--primary-purple);
+    font-size: 1.6rem;
+    font-weight: 800;
+    margin-bottom: 6px;
+}
+
+.auth-head p {
+    color: #888;
+    font-size: 0.88rem;
+}
+
+.referral-notice {
+    background: linear-gradient(135deg, #fff8e1, #ffe0b2);
+    color: #e65100;
+    padding: 12px 16px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 16px;
+    border: 1px solid #ffe0b2;
+}
+
+.auth-error {
+    background: #fdeaea;
+    color: #b71c1c;
+    padding: 11px 14px;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.auth-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.auth-field label {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #30384f;
+}
+
+.auth-field input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #e0d5e8;
+    border-radius: 10px;
+    font-size: 0.92rem;
+    font-family: inherit;
+    outline: none;
+    transition: 0.2s;
+    box-sizing: border-box;
+}
+
+.auth-field input:focus {
+    border-color: var(--primary-pink);
+    box-shadow: 0 0 0 3px rgba(216, 27, 96, 0.1);
+}
+
+.auth-submit-btn {
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    background: var(--gradient-main);
+    color: #fff;
+    font-weight: 800;
+    font-size: 0.95rem;
+    cursor: pointer;
+    border: none;
+    margin-top: 8px;
+    transition: 0.2s;
+}
+
+.auth-submit-btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(216, 27, 96, 0.25);
+}
+
+.auth-submit-btn:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
+
+.auth-footer {
+    text-align: center;
+    margin-top: 18px;
+    font-size: 0.85rem;
+    color: #888;
+}
+
+.auth-footer a {
+    color: var(--primary-pink);
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.auth-footer a:hover {
+    text-decoration: underline;
+}
+
+/* ============================================================
+   AFFILIATE DASHBOARD
+   ============================================================ */
+
+.dashboard-page {
+    min-height: 70vh;
+    padding: 2.5rem 1rem;
+    background: var(--light-bg);
+}
+
+.dashboard-container {
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.dashboard-welcome {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 14px;
+    padding: 20px 24px;
+    background: linear-gradient(135deg, #6b1d8e, #d81b60);
+    color: #fff;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(107, 29, 142, 0.25);
+    flex-wrap: wrap;
+}
+
+.dashboard-welcome h1 {
+    font-size: 1.4rem;
+    font-weight: 800;
+    margin-bottom: 4px;
+}
+
+.dashboard-welcome p {
+    font-size: 0.85rem;
+    opacity: 0.9;
+}
+
+.dashboard-logout-btn {
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: 0.2s;
+    white-space: nowrap;
+}
+
+.dashboard-logout-btn:hover {
+    background: rgba(255, 255, 255, 0.35);
+}
+
+.dashboard-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 14px;
+}
+
+.dashboard-stat-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 20px 16px;
+    text-align: center;
+    border: 1px solid #f0e4f5;
+    transition: 0.2s;
+}
+
+.dashboard-stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(107, 29, 142, 0.08);
+}
+
+.stat-icon {
+    font-size: 1.8rem;
+    margin-bottom: 8px;
+}
+
+.stat-value {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--primary-purple);
+    margin-bottom: 4px;
+    line-height: 1.2;
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    color: #888;
+    font-weight: 600;
+}
+
+.dashboard-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 24px;
+    border: 1px solid #f0e4f5;
+    box-shadow: 0 4px 16px rgba(107, 29, 142, 0.05);
+}
+
+.dashboard-card-title {
+    color: var(--primary-purple);
+    font-size: 1.05rem;
+    font-weight: 800;
+    margin-bottom: 16px;
+}
+
+.referral-code-box,
+.referral-link-box {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.referral-code {
+    flex: 1;
+    min-width: 200px;
+    padding: 14px 18px;
+    background: linear-gradient(135deg, #fdf7ff, #fff8f0);
+    border: 2px dashed var(--primary-pink);
+    border-radius: 12px;
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--primary-purple);
+    letter-spacing: 3px;
+    text-align: center;
+    font-family: 'Courier New', monospace;
+}
+
+.referral-link {
+    flex: 1;
+    min-width: 200px;
+    padding: 14px 18px;
+    background: #f8f6fb;
+    border: 1px solid #e0d5e8;
+    border-radius: 12px;
+    font-size: 0.82rem;
+    color: #555;
+    word-break: break-all;
+    font-family: 'Courier New', monospace;
+}
+
+.referral-copy-btn {
+    padding: 12px 20px;
+    background: var(--gradient-main);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 0.82rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: 0.2s;
+    flex-shrink: 0;
+}
+
+.referral-copy-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(216, 27, 96, 0.25);
+}
+
+.share-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 14px;
+}
+
+.share-btn {
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: none;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.share-facebook {
+    background: #1877f2;
+    color: #fff;
+}
+
+.share-facebook:hover {
+    background: #1462c7;
+    transform: translateY(-1px);
+}
+
+.share-whatsapp {
+    background: #25d366;
+    color: #fff;
+}
+
+.share-whatsapp:hover {
+    background: #1eb354;
+    transform: translateY(-1px);
+}
+
+.how-it-works {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.step {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.step-number {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--gradient-main);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+}
+
+.step-text {
+    flex: 1;
+    color: #555;
+    font-size: 0.88rem;
+    line-height: 1.5;
+    padding-top: 6px;
+}
+
+.dashboard-cta {
+    text-align: center;
+    padding: 10px 0;
+}
+
+.dashboard-shop-btn {
+    display: inline-block;
+    padding: 14px 32px;
+    background: var(--gradient-main);
+    color: #fff;
+    border-radius: 30px;
+    font-weight: 800;
+    font-size: 0.95rem;
+    text-decoration: none;
+    transition: 0.2s;
+    box-shadow: 0 6px 20px rgba(216, 27, 96, 0.25);
+}
+
+.dashboard-shop-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 28px rgba(216, 27, 96, 0.35);
 }
 
 /* ============================================================
@@ -2177,7 +2931,6 @@ footer {
         font-size: 1rem;
     }
 
-    /* MOBILE-এ ১ কলাম */
     .home-reviews {
         margin-top: 2.5rem;
         padding-top: 2rem;
@@ -2214,7 +2967,6 @@ footer {
         font-size: 2rem;
     }
 
-    /* Video Mobile — ২ কলাম */
     .video-section {
         margin-top: 2.5rem;
         padding-top: 2rem;
@@ -2261,6 +3013,55 @@ footer {
     .video-close-btn {
         padding: 6px 12px;
         font-size: 0.75rem;
+    }
+
+    .affiliate-btn-signup,
+    .affiliate-btn-logged {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.75rem;
+    }
+
+    .affiliate-btn-logged {
+        max-width: 100px;
+    }
+
+    .affiliate-logout-btn {
+        padding: 0.5rem 0.7rem;
+        font-size: 0.75rem;
+    }
+
+    .auth-container {
+        padding: 24px 20px;
+    }
+
+    .auth-head h1 {
+        font-size: 1.35rem;
+    }
+
+    .dashboard-welcome {
+        padding: 16px 18px;
+    }
+
+    .dashboard-welcome h1 {
+        font-size: 1.15rem;
+    }
+
+    .dashboard-card {
+        padding: 18px;
+    }
+
+    .referral-code {
+        font-size: 1.1rem;
+        letter-spacing: 2px;
+        padding: 12px 14px;
+    }
+
+    .share-buttons {
+        grid-template-columns: 1fr;
+    }
+
+    .stat-value {
+        font-size: 1.2rem;
     }
 }
 
@@ -2373,7 +3174,6 @@ footer {
         padding: 10px 8px;
     }
 
-    /* Video Small Mobile */
     .video-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 0.7rem;
@@ -2388,262 +3188,7 @@ footer {
     .video-title {
         font-size: 0.75rem;
     }
-}
 
-/* ============================================================
-   COUPON — Checkout Input
-   ============================================================ */
-
-.coupon-input-section {
-    margin: 14px 0;
-    padding: 12px 14px;
-    border: 1px dashed #e0d5e8;
-    border-radius: 10px;
-    background: #fdfaff;
-}
-
-.coupon-label {
-    display: block;
-    font-size: 13px;
-    font-weight: 700;
-    color: #30384f;
-    margin-bottom: 8px;
-}
-
-.coupon-form {
-    display: flex;
-    gap: 8px;
-}
-
-.coupon-input {
-    flex: 1;
-    padding: 10px 14px;
-    border: 1px solid #e0d5e8;
-    border-radius: 8px;
-    font-size: 14px;
-    font-family: inherit;
-    outline: none;
-    transition: 0.2s;
-    letter-spacing: 1px;
-    font-weight: 600;
-    text-transform: uppercase;
-}
-
-.coupon-input:focus {
-    border-color: var(--primary-pink);
-    box-shadow: 0 0 0 3px rgba(216, 27, 96, 0.1);
-}
-
-.coupon-apply-btn {
-    padding: 10px 18px;
-    border-radius: 8px;
-    background: var(--gradient-main);
-    color: #fff;
-    font-weight: 700;
-    font-size: 13px;
-    cursor: pointer;
-    border: none;
-    white-space: nowrap;
-    transition: 0.2s;
-}
-
-.coupon-apply-btn:hover:not(:disabled) {
-    opacity: 0.9;
-    transform: translateY(-1px);
-}
-
-.coupon-apply-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-.coupon-error {
-    margin-top: 8px;
-    padding: 8px 12px;
-    background: #fdeaea;
-    color: #b71c1c;
-    border-radius: 8px;
-    font-size: 12.5px;
-    font-weight: 600;
-}
-
-/* ---------- Applied Coupon ---------- */
-
-.coupon-applied-box {
-    margin: 14px 0;
-    padding: 12px 14px;
-    background: linear-gradient(135deg, #e8f7ec, #f0fbf4);
-    border: 1px solid #c8e8d4;
-    border-radius: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 10px;
-}
-
-.coupon-applied-info {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex: 1;
-    min-width: 0;
-}
-
-.coupon-applied-icon {
-    font-size: 1.6rem;
-    flex-shrink: 0;
-}
-
-.coupon-applied-code {
-    font-weight: 800;
-    font-size: 14.5px;
-    color: #16833b;
-    letter-spacing: 1px;
-    margin-bottom: 2px;
-}
-
-.coupon-applied-value {
-    font-size: 12px;
-    color: #4a7d5a;
-    font-weight: 600;
-}
-
-.coupon-remove-btn {
-    padding: 6px 12px;
-    border-radius: 20px;
-    background: #fff;
-    color: #b71c1c;
-    font-weight: 700;
-    font-size: 12px;
-    cursor: pointer;
-    border: 1px solid #f4c5c5;
-    transition: 0.2s;
-    white-space: nowrap;
-    flex-shrink: 0;
-}
-
-.coupon-remove-btn:hover {
-    background: #b71c1c;
-    color: #fff;
-}
-
-/* ---------- Discount Row in Summary ---------- */
-
-.coupon-discount-row {
-    color: #16833b !important;
-    font-weight: 700;
-}
-
-.coupon-discount-value {
-    color: #16833b;
-    font-weight: 800;
-}
-
-/* ============================================================
-   ADMIN COUPON
-   ============================================================ */
-
-.admin-coupon-form {
-    padding: 14px;
-    border: 1px solid #f0e4f5;
-    border-radius: 12px;
-    background: #fdfaff;
-    margin-bottom: 10px;
-}
-
-.admin-coupon-list {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    max-height: 400px;
-    overflow-y: auto;
-    padding-right: 4px;
-}
-
-.admin-coupon-item {
-    padding: 12px 14px;
-    border: 1px solid #f0e4f5;
-    border-radius: 11px;
-    background: #fdfaff;
-    position: relative;
-}
-
-.admin-coupon-item.inactive {
-    opacity: 0.6;
-    background: #f5f5f5;
-}
-
-.admin-coupon-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 10px;
-    margin-bottom: 8px;
-}
-
-.admin-coupon-code {
-    font-weight: 800;
-    font-size: 15px;
-    color: var(--primary-purple);
-    letter-spacing: 1.5px;
-    margin-bottom: 3px;
-}
-
-.admin-coupon-discount {
-    font-size: 12.5px;
-    color: #555;
-    font-weight: 600;
-}
-
-.admin-coupon-toggle {
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-    background: #fff;
-    border: 1px solid #e0d5e8;
-    font-size: 16px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    transition: 0.2s;
-}
-
-.admin-coupon-toggle:hover {
-    background: var(--light-bg);
-    border-color: var(--primary-pink);
-}
-
-.admin-coupon-meta {
-    display: flex;
-    gap: 14px;
-    font-size: 11.5px;
-    color: #888;
-    margin-bottom: 10px;
-    flex-wrap: wrap;
-}
-
-.admin-coupon-delete {
-    padding: 6px 12px;
-    border-radius: 8px;
-    background: #fdeaea;
-    color: #b71c1c;
-    font-weight: 700;
-    font-size: 12px;
-    cursor: pointer;
-    border: none;
-    transition: 0.2s;
-}
-
-.admin-coupon-delete:hover {
-    background: #b71c1c;
-    color: #fff;
-}
-
-/* ---------- Mobile ---------- */
-
-@media (max-width: 480px) {
     .coupon-form {
         flex-direction: column;
     }
@@ -2660,5 +3205,38 @@ footer {
     .coupon-remove-btn {
         width: 100%;
         text-align: center;
+    }
+
+    .affiliate-btn-signup span,
+    .affiliate-btn-logged span,
+    .affiliate-logout-btn span {
+        display: none;
+    }
+
+    .affiliate-btn-signup,
+    .affiliate-btn-logged {
+        padding: 0.5rem 0.7rem;
+        min-width: 44px;
+        justify-content: center;
+    }
+
+    .affiliate-logout-btn {
+        padding: 0.5rem 0.7rem;
+        min-width: 44px;
+        justify-content: center;
+    }
+
+    .dashboard-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .referral-code-box,
+    .referral-link-box {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .referral-copy-btn {
+        width: 100%;
     }
 }

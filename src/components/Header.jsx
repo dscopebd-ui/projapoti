@@ -1,12 +1,9 @@
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { SITE } from '../data/siteConfig.js';
 import { useCart } from '../context/CartContext.jsx';
+import { useAffiliate } from '../context/AffiliateContext.jsx';
 import SearchBar from './SearchBar.jsx';
-import {
-    listenApprovedReviews,
-    calcOverallRating
-} from '../firebase/reviews.js';
 
 export default function Header({
     onCartClick,
@@ -15,21 +12,24 @@ export default function Header({
     onAdminClick,
     adminLabel
 }) {
+    const navigate = useNavigate();
     const { totalQty } = useCart();
-    const [rating, setRating] = useState({ average: 0, count: 0 });
+    const { user: affiliateUser, isLoggedIn: isAffiliateLoggedIn, logout } = useAffiliate();
 
-    useEffect(() => {
-        const unsub = listenApprovedReviews(
-            (list) => {
-                setRating(calcOverallRating(list));
-            },
-            () => {}
-        );
-        return () => unsub();
-    }, []);
+    const affiliateFirstName =
+        affiliateUser?.name?.trim()?.split(' ')[0] || 'Dashboard';
 
-    /* ব্যাজ দেখাবো যদি কমপক্ষে 1টি রিভিউ থাকে */
-    const showRating = rating.count >= 1;
+    const isAdminLoggedIn = adminLabel === 'Admin';
+
+    /* 🆕 সরাসরি লগআউট */
+    const handleAffiliateLogout = async () => {
+        try {
+            await logout();
+            navigate('/');
+        } catch (err) {
+            console.error(err);
+        }
+    };
 
     return (
         <header>
@@ -41,15 +41,6 @@ export default function Header({
                     <div className="brand-text">
                         <h1>{SITE.name}</h1>
                         <p>{SITE.tagline}</p>
-                        {showRating && (
-                            <div className="header-rating-badge">
-                                <span className="header-rating-star">★</span>
-                                <strong>{rating.average.toFixed(1)}</strong>
-                                <span className="header-rating-count">
-                                    ({rating.count})
-                                </span>
-                            </div>
-                        )}
                     </div>
                 </Link>
 
@@ -63,13 +54,64 @@ export default function Header({
                 <div className="navbar-right">
                     <SearchBar />
 
-                    <button
-                        className="admin-btn"
-                        type="button"
-                        onClick={onAdminClick}
-                    >
-                        🔐 <span>{adminLabel}</span>
-                    </button>
+                    {/* ==========================================
+                        🎁 কাস্টমার — নাম (ড্যাশবোর্ড লিংক)
+                        ========================================== */}
+                    {isAffiliateLoggedIn ? (
+                        <Link
+                            to="/dashboard"
+                            className="affiliate-btn-logged"
+                            title={affiliateUser?.name || 'ড্যাশবোর্ড'}
+                        >
+                            🎁 {affiliateFirstName}
+                        </Link>
+                    ) : (
+                        <Link
+                            to="/signup"
+                            className="affiliate-btn-signup"
+                            title="রেফার করে আয় করুন"
+                        >
+                            🎁 রেফার করে আয়
+                        </Link>
+                    )}
+
+                    {/* ==========================================
+                        🆕 সরাসরি লগআউট বাটন (কাস্টমার লগইন থাকলে)
+                        ========================================== */}
+                    {isAffiliateLoggedIn && (
+                        <button
+                            type="button"
+                            className="affiliate-logout-btn"
+                            onClick={handleAffiliateLogout}
+                            title="লগআউট করুন"
+                        >
+                            🚪 লগআউট
+                        </button>
+                    )}
+
+                    {/* ==========================================
+                        🔐 Admin — শুধু কাস্টমার লগইন না থাকলে
+                        ========================================== */}
+                    {!isAffiliateLoggedIn && (
+                        <button
+                            className="admin-btn"
+                            type="button"
+                            onClick={onAdminClick}
+                        >
+                            🔐 <span>{adminLabel}</span>
+                        </button>
+                    )}
+
+                    {isAdminLoggedIn && (
+                        <button
+                            className="admin-btn logged-in"
+                            type="button"
+                            onClick={onAdminClick}
+                            title="Admin Panel বন্ধ করুন"
+                        >
+                            🔐 Admin
+                        </button>
+                    )}
 
                     <button
                         className="cart-btn"

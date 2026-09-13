@@ -13,8 +13,12 @@ import AdminPanel from './components/AdminPanel.jsx';
 import Footer from './components/Footer.jsx';
 import HomeReviews from './components/HomeReviews.jsx';
 import VideoSection from './components/VideoSection.jsx';
+import ReferralBanner from './components/ReferralBanner.jsx';
 import CategoryPage from './pages/CategoryPage.jsx';
 import SearchPage from './pages/SearchPage.jsx';
+import SignupPage from './pages/SignupPage.jsx';
+import LoginPage from './pages/LoginPage.jsx';
+import AffiliateDashboard from './pages/AffiliateDashboard.jsx';
 import { useAuth } from './context/AuthContext.jsx';
 import { useProducts } from './context/ProductContext.jsx';
 
@@ -47,6 +51,8 @@ function HomePage({
                 />
             </div>
 
+            <ReferralBanner />
+
             <Banner />
 
             <div className="container">
@@ -61,11 +67,7 @@ function HomePage({
                     />
                 </div>
 
-                
-                {/* ⭐ কাস্টমার রিভিউ সেকশন */}
                 <HomeReviews />
-
-                {/* 🎬 ভিডিও সেকশন */}
                 <VideoSection />
             </div>
 
@@ -212,7 +214,6 @@ export default function App() {
     const openCart = () => setCartOpen(true);
     const closeCart = () => setCartOpen(false);
 
-    /* Toggle — একবার ক্লিকে খোলে, আবার ক্লিকে বন্ধ */
     const toggleAdmin = () => setAdminOpen((prev) => !prev);
     const closeAdmin = () => setAdminOpen(false);
 
@@ -284,12 +285,16 @@ export default function App() {
                     }
                 />
 
+                {/* 🆕 Affiliate Routes */}
+                <Route path="/signup" element={<SignupPage />} />
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/dashboard" element={<AffiliateDashboard />} />
+
                 <Route path="*" element={<NotFound />} />
             </Routes>
 
             <CartDrawer open={cartOpen} onClose={closeCart} />
 
-            {/* AdminPanel শুধু adminOpen true হলে render হবে */}
             {adminOpen && (
                 <AdminPanel
                     open={adminOpen}

@@ -7,6 +7,7 @@ import './styles/admin.css';
 import { AuthProvider } from './context/AuthContext.jsx';
 import { ProductProvider } from './context/ProductContext.jsx';
 import { CartProvider } from './context/CartContext.jsx';
+import { AffiliateProvider } from './context/AffiliateContext.jsx';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
     <React.StrictMode>
@@ -14,7 +15,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             <AuthProvider>
                 <ProductProvider>
                     <CartProvider>
-                        <App />
+                        <AffiliateProvider>
+                            <App />
+                        </AffiliateProvider>
                     </CartProvider>
                 </ProductProvider>
             </AuthProvider>
