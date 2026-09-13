@@ -4,6 +4,8 @@ import { useCart } from '../context/CartContext.jsx';
 import { useProducts } from '../context/ProductContext.jsx';
 import { formatPrice, getDiscountPercent } from '../utils/formatPrice.js';
 import { useSEO } from '../hooks/useSEO.js';
+import ReviewList from './ReviewList.jsx';
+import ReviewForm from './ReviewForm.jsx';
 
 export default function ProductDetail() {
     const { slug } = useParams();
@@ -11,7 +13,6 @@ export default function ProductDetail() {
     const { products, loading } = useProducts();
     const { addToCart } = useCart();
 
-    /* slug থেকে id বের করা (শেষ অংশ) */
     const productId = slug ? slug.split('-').pop() : null;
 
     const product = products.find(
@@ -204,6 +205,22 @@ export default function ProductDetail() {
                             </div>
                         )}
                     </div>
+                </div>
+
+                {/* ================================================
+                    REVIEWS SECTION
+                    ================================================ */}
+                <div className="reviews-section">
+                    <h2 className="section-title" style={{ textAlign: 'left' }}>
+                        ⭐ কাস্টমার রিভিউ
+                    </h2>
+
+                    <ReviewList productId={product.id} />
+
+                    <ReviewForm
+                        productId={product.id}
+                        productName={product.name}
+                    />
                 </div>
             </div>
         </div>

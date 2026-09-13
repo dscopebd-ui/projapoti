@@ -11,13 +11,23 @@ import CartDrawer from './components/CartDrawer.jsx';
 import CheckoutModal from './components/CheckoutModal.jsx';
 import AdminPanel from './components/AdminPanel.jsx';
 import Footer from './components/Footer.jsx';
+import HomeReviews from './components/HomeReviews.jsx';
+import VideoSection from './components/VideoSection.jsx';
 import CategoryPage from './pages/CategoryPage.jsx';
 import SearchPage from './pages/SearchPage.jsx';
 import { useAuth } from './context/AuthContext.jsx';
 import { useProducts } from './context/ProductContext.jsx';
 
-function HomePage({ onOpenCart, onOpenAdmin, adminLabel }) {
-    const [menuOpen, setMenuOpen] = useState(false);
+/* ============================================================
+   হোম পেজ
+   ============================================================ */
+function HomePage({
+    onOpenCart,
+    onToggleAdmin,
+    adminLabel,
+    menuOpen,
+    setMenuOpen
+}) {
     const { products, loading } = useProducts();
 
     return (
@@ -28,7 +38,7 @@ function HomePage({ onOpenCart, onOpenAdmin, adminLabel }) {
                     onCartClick={onOpenCart}
                     onMenuToggle={() => setMenuOpen(!menuOpen)}
                     menuOpen={menuOpen}
-                    onAdminClick={onOpenAdmin}
+                    onAdminClick={onToggleAdmin}
                     adminLabel={adminLabel}
                 />
                 <MobileNav
@@ -50,6 +60,13 @@ function HomePage({ onOpenCart, onOpenAdmin, adminLabel }) {
                         loading={loading}
                     />
                 </div>
+
+                
+                {/* ⭐ কাস্টমার রিভিউ সেকশন */}
+                <HomeReviews />
+
+                {/* 🎬 ভিডিও সেকশন */}
+                <VideoSection />
             </div>
 
             <Footer />
@@ -57,8 +74,16 @@ function HomePage({ onOpenCart, onOpenAdmin, adminLabel }) {
     );
 }
 
-function CheckoutPage({ onOpenCart, onOpenAdmin, adminLabel }) {
-    const [menuOpen, setMenuOpen] = useState(false);
+/* ============================================================
+   চেকআউট পেজ
+   ============================================================ */
+function CheckoutPage({
+    onOpenCart,
+    onToggleAdmin,
+    adminLabel,
+    menuOpen,
+    setMenuOpen
+}) {
     const [checkoutOpen, setCheckoutOpen] = useState(true);
     const navigate = useNavigate();
 
@@ -75,7 +100,7 @@ function CheckoutPage({ onOpenCart, onOpenAdmin, adminLabel }) {
                     onCartClick={onOpenCart}
                     onMenuToggle={() => setMenuOpen(!menuOpen)}
                     menuOpen={menuOpen}
-                    onAdminClick={onOpenAdmin}
+                    onAdminClick={onToggleAdmin}
                     adminLabel={adminLabel}
                 />
                 <MobileNav
@@ -98,9 +123,16 @@ function CheckoutPage({ onOpenCart, onOpenAdmin, adminLabel }) {
     );
 }
 
-function ProductDetailPage({ onOpenCart, onOpenAdmin, adminLabel }) {
-    const [menuOpen, setMenuOpen] = useState(false);
-
+/* ============================================================
+   Product Detail পেজ
+   ============================================================ */
+function ProductDetailPage({
+    onOpenCart,
+    onToggleAdmin,
+    adminLabel,
+    menuOpen,
+    setMenuOpen
+}) {
     return (
         <>
             <div className="site-top">
@@ -109,7 +141,7 @@ function ProductDetailPage({ onOpenCart, onOpenAdmin, adminLabel }) {
                     onCartClick={onOpenCart}
                     onMenuToggle={() => setMenuOpen(!menuOpen)}
                     menuOpen={menuOpen}
-                    onAdminClick={onOpenAdmin}
+                    onAdminClick={onToggleAdmin}
                     adminLabel={adminLabel}
                 />
                 <MobileNav
@@ -125,11 +157,23 @@ function ProductDetailPage({ onOpenCart, onOpenAdmin, adminLabel }) {
     );
 }
 
+/* ============================================================
+   404 পেজ
+   ============================================================ */
 function NotFound() {
     const navigate = useNavigate();
     return (
-        <div className="container" style={{ padding: '5rem 1rem', textAlign: 'center' }}>
-            <h1 style={{ fontSize: '3rem', color: '#6b1d8e', marginBottom: 12 }}>
+        <div
+            className="container"
+            style={{ padding: '5rem 1rem', textAlign: 'center' }}
+        >
+            <h1
+                style={{
+                    fontSize: '3rem',
+                    color: '#6b1d8e',
+                    marginBottom: 12
+                }}
+            >
                 404
             </h1>
             <h2 style={{ color: '#333', marginBottom: 12 }}>
@@ -150,9 +194,14 @@ function NotFound() {
     );
 }
 
+/* ============================================================
+   মূল App
+   ============================================================ */
 export default function App() {
     const [cartOpen, setCartOpen] = useState(false);
     const [adminOpen, setAdminOpen] = useState(false);
+    const [menuOpen, setMenuOpen] = useState(false);
+
     const { user } = useAuth();
     const location = useLocation();
 
@@ -162,7 +211,9 @@ export default function App() {
 
     const openCart = () => setCartOpen(true);
     const closeCart = () => setCartOpen(false);
-    const openAdmin = () => setAdminOpen(true);
+
+    /* Toggle — একবার ক্লিকে খোলে, আবার ক্লিকে বন্ধ */
+    const toggleAdmin = () => setAdminOpen((prev) => !prev);
     const closeAdmin = () => setAdminOpen(false);
 
     const adminLabel = user ? 'Admin' : 'Login';
@@ -175,8 +226,10 @@ export default function App() {
                     element={
                         <HomePage
                             onOpenCart={openCart}
-                            onOpenAdmin={openAdmin}
+                            onToggleAdmin={toggleAdmin}
                             adminLabel={adminLabel}
+                            menuOpen={menuOpen}
+                            setMenuOpen={setMenuOpen}
                         />
                     }
                 />
@@ -186,7 +239,9 @@ export default function App() {
                     element={
                         <CategoryPage
                             onOpenCart={openCart}
-                            onOpenAdmin={openAdmin}
+                            onToggleAdmin={toggleAdmin}
+                            menuOpen={menuOpen}
+                            setMenuOpen={setMenuOpen}
                         />
                     }
                 />
@@ -196,7 +251,9 @@ export default function App() {
                     element={
                         <SearchPage
                             onOpenCart={openCart}
-                            onOpenAdmin={openAdmin}
+                            onToggleAdmin={toggleAdmin}
+                            menuOpen={menuOpen}
+                            setMenuOpen={setMenuOpen}
                         />
                     }
                 />
@@ -206,8 +263,10 @@ export default function App() {
                     element={
                         <ProductDetailPage
                             onOpenCart={openCart}
-                            onOpenAdmin={openAdmin}
+                            onToggleAdmin={toggleAdmin}
                             adminLabel={adminLabel}
+                            menuOpen={menuOpen}
+                            setMenuOpen={setMenuOpen}
                         />
                     }
                 />
@@ -217,8 +276,10 @@ export default function App() {
                     element={
                         <CheckoutPage
                             onOpenCart={openCart}
-                            onOpenAdmin={openAdmin}
+                            onToggleAdmin={toggleAdmin}
                             adminLabel={adminLabel}
+                            menuOpen={menuOpen}
+                            setMenuOpen={setMenuOpen}
                         />
                     }
                 />
@@ -227,7 +288,14 @@ export default function App() {
             </Routes>
 
             <CartDrawer open={cartOpen} onClose={closeCart} />
-            <AdminPanel open={adminOpen} onClose={closeAdmin} />
+
+            {/* AdminPanel শুধু adminOpen true হলে render হবে */}
+            {adminOpen && (
+                <AdminPanel
+                    open={adminOpen}
+                    onClose={closeAdmin}
+                />
+            )}
         </>
     );
 }
