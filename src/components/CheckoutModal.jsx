@@ -5,12 +5,13 @@ import { paymentMethods, getDeliveryCharge } from '../data/paymentMethods.js';
 import { districts } from '../data/districts.js';
 import { SITE, WEB3FORMS_KEY } from '../data/siteConfig.js';
 import { formatPrice } from '../utils/formatPrice.js';
+import { incrementCouponUsage } from '../firebase/coupons.js';
+import CouponInput from './CouponInput.jsx';
 
 export default function CheckoutModal({ open, onClose }) {
     const { cart, clearCart } = useCart();
     const { products } = useProducts();
 
-    /* ---------- Form state ---------- */
     const [name, setName] = useState('');
     const [phone, setPhone] = useState('');
     const [address, setAddress] = useState('');
@@ -23,7 +24,9 @@ export default function CheckoutModal({ open, onClose }) {
     const [submitError, setSubmitError] = useState('');
     const [successOrderId, setSuccessOrderId] = useState(null);
 
-    /* ---------- Cart items ---------- */
+    const [appliedCoupon, setAppliedCoupon] = useState(null);
+    const [couponDiscount, setCouponDiscount] = useState(0);
+
     const entries = Object.entries(cart).filter(([, qty]) => qty > 0);
     const items = entries
         .map(([id, qty]) => {
@@ -36,10 +39,11 @@ export default function CheckoutModal({ open, onClose }) {
         (sum, { product, qty }) => sum + product.price * qty,
         0
     );
-    const shipping = getDeliveryCharge(district);
-    const total = subtotal + shipping;
 
-    /* ---------- Reset ---------- */
+    const shipping = getDeliveryCharge(district);
+    const discount = couponDiscount;
+    const total = Math.max(0, subtotal - discount + shipping);
+
     const resetForm = () => {
         setName('');
         setPhone('');
@@ -49,6 +53,8 @@ export default function CheckoutModal({ open, onClose }) {
         setTrxId('');
         setErrors({});
         setSubmitError('');
+        setAppliedCoupon(null);
+        setCouponDiscount(0);
     };
 
     const handleClose = () => {
@@ -61,7 +67,16 @@ export default function CheckoutModal({ open, onClose }) {
         onClose();
     };
 
-    /* ---------- Validate ---------- */
+    const handleApplyCoupon = (coupon, disc) => {
+        setAppliedCoupon(coupon);
+        setCouponDiscount(disc);
+    };
+
+    const handleRemoveCoupon = () => {
+        setAppliedCoupon(null);
+        setCouponDiscount(0);
+    };
+
     const validate = () => {
         const e = {};
         if (!name.trim()) e.name = 'নাম লিখুন';
@@ -75,7 +90,6 @@ export default function CheckoutModal({ open, onClose }) {
         return Object.keys(e).length === 0;
     };
 
-    /* ---------- Submit ---------- */
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -85,11 +99,8 @@ export default function CheckoutModal({ open, onClose }) {
         setSubmitting(true);
         setSubmitError('');
 
-        /* অর্ডার আইডি */
-        const orderId =
-            'PRJ-' + Math.floor(10000 + Math.random() * 89999);
+        const orderId = 'PRJ-' + Math.floor(10000 + Math.random() * 89999);
 
-        /* প্রোডাক্ট লিস্ট */
         const itemsList = items
             .map(
                 ({ product, qty }) =>
@@ -113,6 +124,8 @@ export default function CheckoutModal({ open, onClose }) {
             'জেলা': district,
             'পণ্যসমূহ': itemsList,
             'উপমোট': formatPrice(subtotal),
+            'কুপন কোড': appliedCoupon ? appliedCoupon.code : 'প্রযোজ্য নয়',
+            'কুপন ছাড়': discount > 0 ? `-${formatPrice(discount)}` : 'প্রযোজ্য নয়',
             'ডেলিভারি চার্জ': formatPrice(shipping),
             'সর্বমোট': formatPrice(total),
             'পেমেন্ট মাধ্যম': paymentLabel,
@@ -120,31 +133,28 @@ export default function CheckoutModal({ open, onClose }) {
         };
 
         try {
-            const res = await fetch(
-                'https://api.web3forms.com/submit',
-                {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Accept: 'application/json'
-                    },
-                    body: JSON.stringify(payload)
-                }
-            );
+            const res = await fetch('https://api.web3forms.com/submit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
             const result = await res.json();
 
             if (!result.success) {
-                throw new Error(
-                    result.message || 'পাঠানো যায়নি'
-                );
+                throw new Error(result.message || 'পাঠানো যায়নি');
+            }
+
+            if (appliedCoupon && appliedCoupon.id) {
+                await incrementCouponUsage(appliedCoupon.id);
             }
 
             setSuccessOrderId(orderId);
         } catch (err) {
             console.error(err);
-            setSubmitError(
-                'অর্ডার পাঠাতে সমস্যা হয়েছে। আবার চেষ্টা করুন।'
-            );
+            setSubmitError('অর্ডার পাঠাতে সমস্যা হয়েছে। আবার চেষ্টা করুন।');
         } finally {
             setSubmitting(false);
         }
@@ -156,11 +166,7 @@ export default function CheckoutModal({ open, onClose }) {
 
     return (
         <div className="modal-overlay open" onClick={handleClose}>
-            <div
-                className="modal"
-                onClick={(e) => e.stopPropagation()}
-            >
-                {/* ---------- SUCCESS ---------- */}
+            <div className="modal" onClick={(e) => e.stopPropagation()}>
                 {successOrderId ? (
                     <div className="confirm">
                         <div className="check">
@@ -182,9 +188,7 @@ export default function CheckoutModal({ open, onClose }) {
                             শীঘ্রই আমরা আপনার সাথে যোগাযোগ করব।
                         </p>
 
-                        <div className="order-id">
-                            অর্ডার নম্বর: {successOrderId}
-                        </div>
+                        <div className="order-id">অর্ডার নম্বর: {successOrderId}</div>
 
                         <button
                             className="place-order-btn"
@@ -196,14 +200,12 @@ export default function CheckoutModal({ open, onClose }) {
                         </button>
                     </div>
                 ) : (
-                    /* ---------- FORM ---------- */
                     <form onSubmit={handleSubmit}>
                         <h3>ডেলিভারি তথ্য</h3>
                         <div className="sub">
                             আপনার সঠিক তথ্য দিয়ে অর্ডারটি নিশ্চিত করুন।
                         </div>
 
-                        {/* NAME */}
                         <div className="field">
                             <label>পুরো নাম</label>
                             <input
@@ -214,13 +216,10 @@ export default function CheckoutModal({ open, onClose }) {
                                 className={errors.name ? 'err' : ''}
                             />
                             {errors.name && (
-                                <div className="field-error">
-                                    {errors.name}
-                                </div>
+                                <div className="field-error">{errors.name}</div>
                             )}
                         </div>
 
-                        {/* PHONE */}
                         <div className="field">
                             <label>ফোন নম্বর</label>
                             <input
@@ -231,13 +230,10 @@ export default function CheckoutModal({ open, onClose }) {
                                 className={errors.phone ? 'err' : ''}
                             />
                             {errors.phone && (
-                                <div className="field-error">
-                                    {errors.phone}
-                                </div>
+                                <div className="field-error">{errors.phone}</div>
                             )}
                         </div>
 
-                        {/* ADDRESS */}
                         <div className="field">
                             <label>বিস্তারিত ঠিকানা</label>
                             <input
@@ -248,13 +244,10 @@ export default function CheckoutModal({ open, onClose }) {
                                 className={errors.address ? 'err' : ''}
                             />
                             {errors.address && (
-                                <div className="field-error">
-                                    {errors.address}
-                                </div>
+                                <div className="field-error">{errors.address}</div>
                             )}
                         </div>
 
-                        {/* DISTRICT */}
                         <div className="field">
                             <label>জেলা</label>
                             <select
@@ -270,13 +263,10 @@ export default function CheckoutModal({ open, onClose }) {
                                 ))}
                             </select>
                             {errors.district && (
-                                <div className="field-error">
-                                    {errors.district}
-                                </div>
+                                <div className="field-error">{errors.district}</div>
                             )}
                         </div>
 
-                        {/* DELIVERY INFO */}
                         <div className="delivery-info">
                             {!district ? (
                                 <>📦 জেলা নির্বাচন করলে ডেলিভারি চার্জ দেখাবে।</>
@@ -288,7 +278,13 @@ export default function CheckoutModal({ open, onClose }) {
                             )}
                         </div>
 
-                        {/* PAYMENT */}
+                        <CouponInput
+                            subtotal={subtotal}
+                            appliedCoupon={appliedCoupon}
+                            onApply={handleApplyCoupon}
+                            onRemove={handleRemoveCoupon}
+                        />
+
                         <div className="field">
                             <label>পেমেন্ট মাধ্যম বেছে নিন</label>
                             <div className="payment-methods">
@@ -339,20 +335,25 @@ export default function CheckoutModal({ open, onClose }) {
                                         className={errors.trxId ? 'err' : ''}
                                     />
                                     {errors.trxId && (
-                                        <div className="field-error">
-                                            {errors.trxId}
-                                        </div>
+                                        <div className="field-error">{errors.trxId}</div>
                                     )}
                                 </div>
                             )}
                         </div>
 
-                        {/* SUMMARY */}
                         <div className="modal-summary">
                             <div className="row">
                                 <span>উপমোট</span>
                                 <span>{formatPrice(subtotal)}</span>
                             </div>
+                            {discount > 0 && (
+                                <div className="row coupon-discount-row">
+                                    <span>🎟️ কুপন ছাড় ({appliedCoupon?.code})</span>
+                                    <span className="coupon-discount-value">
+                                        -{formatPrice(discount)}
+                                    </span>
+                                </div>
+                            )}
                             <div className="row">
                                 <span>ডেলিভারি চার্জ</span>
                                 <span>{formatPrice(shipping)}</span>
@@ -363,15 +364,12 @@ export default function CheckoutModal({ open, onClose }) {
                             </div>
                         </div>
 
-                        {/* SUBMIT BUTTON */}
                         <button
                             type="submit"
                             className="place-order-btn"
                             disabled={submitting}
                         >
-                            {submitting
-                                ? 'পাঠানো হচ্ছে...'
-                                : 'অর্ডার নিশ্চিত করুন'}
+                            {submitting ? 'পাঠানো হচ্ছে...' : 'অর্ডার নিশ্চিত করুন'}
                         </button>
 
                         {submitError && (
@@ -387,10 +385,7 @@ export default function CheckoutModal({ open, onClose }) {
                             </div>
                         )}
 
-                        <span
-                            className="modal-cancel"
-                            onClick={handleClose}
-                        >
+                        <span className="modal-cancel" onClick={handleClose}>
                             বাতিল করুন, কার্টে ফিরে যান
                         </span>
                     </form>

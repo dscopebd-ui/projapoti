@@ -9,6 +9,7 @@ import {
 } from '../firebase/reviews.js';
 import AdminLogin from './AdminLogin.jsx';
 import AdminProductForm from './AdminProductForm.jsx';
+import AdminCoupons from './AdminCoupons.jsx';
 import StarRating from './StarRating.jsx';
 import { formatPrice } from '../utils/formatPrice.js';
 
@@ -20,7 +21,6 @@ export default function AdminPanel({ open, onClose }) {
     const [reviewFilter, setReviewFilter] = useState('pending');
     const [reviewLoading, setReviewLoading] = useState(true);
 
-    /* Reviews listen */
     useEffect(() => {
         if (!open || !isLoggedIn) return;
 
@@ -35,7 +35,6 @@ export default function AdminPanel({ open, onClose }) {
         return () => unsub();
     }, [open, isLoggedIn]);
 
-    /* ESC key দিয়ে বন্ধ */
     useEffect(() => {
         if (!open) return;
         const onKey = (e) => {
@@ -78,7 +77,6 @@ export default function AdminPanel({ open, onClose }) {
         }
     };
 
-    /* Filter */
     const pendingReviews = reviews.filter((r) => !r.approved);
     const approvedReviews = reviews.filter((r) => r.approved);
 
@@ -100,7 +98,7 @@ export default function AdminPanel({ open, onClose }) {
                         <h2>{isLoggedIn ? '⚙️ Admin Panel' : '🔐 Admin Login'}</h2>
                         <div className="admin-sub">
                             {isLoggedIn
-                                ? 'প্রোডাক্ট, রিভিউ ও অর্ডার ম্যানেজ করুন'
+                                ? 'প্রোডাক্ট, রিভিউ, কুপন ও অর্ডার ম্যানেজ করুন'
                                 : 'শুধু অ্যাডমিন প্রবেশ করতে পারবেন'}
                         </div>
                     </div>
@@ -127,9 +125,7 @@ export default function AdminPanel({ open, onClose }) {
 
                         <AdminProductForm />
 
-                        {/* ============================================
-                            REVIEWS MANAGEMENT
-                            ============================================ */}
+                        {/* REVIEWS MANAGEMENT */}
                         <div className="admin-section">
                             <h3>⭐ রিভিউ ম্যানেজ</h3>
 
@@ -163,15 +159,10 @@ export default function AdminPanel({ open, onClose }) {
                                     </div>
                                 ) : (
                                     visibleReviews.map((r) => (
-                                        <div
-                                            key={r.id}
-                                            className="admin-review-item"
-                                        >
+                                        <div key={r.id} className="admin-review-item">
                                             <div className="admin-review-head">
                                                 <div>
-                                                    <strong>
-                                                        {r.customerName}
-                                                    </strong>
+                                                    <strong>{r.customerName}</strong>
                                                     <div
                                                         style={{
                                                             fontSize: '0.72rem',
@@ -210,12 +201,7 @@ export default function AdminPanel({ open, onClose }) {
                                                     <button
                                                         type="button"
                                                         className="admin-approve-btn"
-                                                        onClick={() =>
-                                                            handleApprove(
-                                                                r.id,
-                                                                true
-                                                            )
-                                                        }
+                                                        onClick={() => handleApprove(r.id, true)}
                                                     >
                                                         ✅ Approve
                                                     </button>
@@ -223,12 +209,7 @@ export default function AdminPanel({ open, onClose }) {
                                                     <button
                                                         type="button"
                                                         className="admin-unapprove-btn"
-                                                        onClick={() =>
-                                                            handleApprove(
-                                                                r.id,
-                                                                false
-                                                            )
-                                                        }
+                                                        onClick={() => handleApprove(r.id, false)}
                                                     >
                                                         ↩️ Unapprove
                                                     </button>
@@ -238,10 +219,7 @@ export default function AdminPanel({ open, onClose }) {
                                                     type="button"
                                                     className="admin-delete-btn"
                                                     onClick={() =>
-                                                        handleDeleteReview(
-                                                            r.id,
-                                                            r.customerName
-                                                        )
+                                                        handleDeleteReview(r.id, r.customerName)
                                                     }
                                                 >
                                                     🗑️ Delete
@@ -252,6 +230,9 @@ export default function AdminPanel({ open, onClose }) {
                                 )}
                             </div>
                         </div>
+
+                        {/* 🆕 COUPONS MANAGEMENT */}
+                        <AdminCoupons />
 
                         {/* PRODUCTS */}
                         <div className="admin-section">
@@ -277,8 +258,7 @@ export default function AdminPanel({ open, onClose }) {
                                             <div className="admin-product-meta">
                                                 <strong>{p.name}</strong>
                                                 <small>
-                                                    {p.cat} •{' '}
-                                                    {formatPrice(p.price)}
+                                                    {p.cat} • {formatPrice(p.price)}
                                                 </small>
                                             </div>
                                             <button
@@ -286,10 +266,7 @@ export default function AdminPanel({ open, onClose }) {
                                                 className="admin-delete-btn"
                                                 disabled={deleting === p.firebaseDocId}
                                                 onClick={() =>
-                                                    handleDelete(
-                                                        p.firebaseDocId,
-                                                        p.name
-                                                    )
+                                                    handleDelete(p.firebaseDocId, p.name)
                                                 }
                                             >
                                                 {deleting === p.firebaseDocId
